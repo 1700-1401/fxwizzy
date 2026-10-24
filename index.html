@@ -7,111 +7,197 @@
 <style>
   /* BRAND COLORS FROM LOGO */
   :root {
-    --bg-base: #4a0f29;
-    --bg-main: #7A1C4B;       /* Deep Magenta */
-    --panel: #8B2254;         /* Lighter Magenta */
-    --border: #A32B66;        
+    --bg-dark: #2a0916;
+    --bg-main: #5E1339;
+    --panel-bg: rgba(139, 34, 84, 0.4);
+    --panel-border: rgba(212, 175, 55, 0.3);
     --text: #FFFFFF;
     --muted: #E0B0C8;
     
-    --gold: #D4AF37;          /* Logo Gold */
-    --gold-hover: #E5C55A;
-    --green: #00A651;         /* Logo Green */
-    --red: #E50000;           /* Logo Red */
+    --gold: #D4AF37;
+    --gold-glow: rgba(212, 175, 55, 0.4);
+    --green: #00A651;
+    --red: #E50000;
   }
 
   * { box-sizing: border-box; }
-  body {
-    margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: linear-gradient(135deg, var(--bg-base) 0%, var(--bg-main) 100%);
-    color: var(--text); min-height: 100vh; padding: 24px;
-  }
-  .wrap { max-width: 900px; margin: 0 auto; }
   
-  /* HEADER / LOGO */
-  .header { text-align: center; margin-bottom: 24px; }
-  .header img {
-    max-width: 260px; width: 100%; border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.4); border: 1px solid var(--border);
+  body {
+    margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: radial-gradient(circle at top, var(--bg-main) 0%, var(--bg-dark) 100%);
+    color: var(--text); min-height: 100vh; padding: 24px 16px;
+    display: flex; justify-content: center;
   }
-  .sub { color: var(--muted); font-size: .9rem; margin-top: 12px; }
+
+  .wrap { 
+    max-width: 800px; 
+    width: 100%; 
+  }
+  
+  /* HEADER / BRANDING */
+  .header { 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 16px; 
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--panel-border);
+  }
+  .header img {
+    width: 80px; height: 80px;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6), 0 0 15px var(--gold-glow);
+    border: 1px solid var(--gold);
+  }
+  .brand-text h1 {
+    margin: 0;
+    font-size: 2.2rem;
+    font-weight: 900;
+    letter-spacing: -1px;
+    text-transform: lowercase;
+    background: linear-gradient(to right, #ff4b8b, var(--gold), #fff, var(--green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  }
+  .brand-text p {
+    margin: 4px 0 0 0;
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+  }
 
   .disclaimer {
-    background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border); border-left: 3px solid var(--gold);
-    padding: 12px 14px; border-radius: 6px; font-size: .82rem; color: var(--muted);
-    margin-bottom: 20px;
+    background: rgba(0, 0, 0, 0.3); 
+    border: 1px solid var(--panel-border); 
+    border-left: 4px solid var(--gold);
+    padding: 14px 16px; border-radius: 8px; font-size: .85rem; color: var(--muted);
+    margin-bottom: 24px; line-height: 1.4;
   }
+
+  /* GLASSMORPHISM PANELS */
   .panel {
-    background: var(--panel); border: 1px solid var(--border);
-    border-radius: 8px; padding: 20px; margin-bottom: 16px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    background: var(--panel-bg); 
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--panel-border);
+    border-radius: 16px; padding: 24px; margin-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
   }
   
   /* DROPZONE */
   .dropzone {
-    position: relative; border: 2px dashed var(--border); border-radius: 8px;
-    padding: 40px 20px; text-align: center; cursor: pointer; transition: border-color .2s;
-    background: rgba(0,0,0,0.1);
+    position: relative; 
+    border: 2px dashed rgba(224, 176, 200, 0.4); 
+    border-radius: 12px;
+    padding: 40px 20px; text-align: center; cursor: pointer; transition: all .3s ease;
+    background: rgba(0,0,0,0.2);
   }
-  .dropzone:hover, .dropzone.drag { border-color: var(--gold); }
+  .dropzone:hover, .dropzone.drag { 
+    border-color: var(--gold); 
+    background: rgba(212, 175, 55, 0.05);
+    box-shadow: inset 0 0 20px rgba(212, 175, 55, 0.1);
+  }
   .dropzone input {
     position: absolute; inset: 0; width: 100%; height: 100%;
     opacity: 0; cursor: pointer; z-index: 2;
   }
   .dz-inner { pointer-events: none; position: relative; z-index: 1; }
-  .dz-inner p { margin: 6px 0; color: var(--muted); font-size: .9rem; }
-  .dz-inner strong { color: var(--gold); }
+  .dz-inner p { margin: 6px 0; color: var(--muted); font-size: .95rem; }
+  .dz-inner strong { color: var(--gold); font-size: 1.1rem; text-shadow: 0 0 10px var(--gold-glow);}
   
-  #preview { max-width: 100%; border-radius: 6px; margin-top: 12px; display: none; border: 1px solid var(--border); }
+  #preview { 
+    max-width: 100%; max-height: 400px; object-fit: contain; 
+    border-radius: 8px; margin-top: 16px; display: none; 
+    border: 1px solid var(--panel-border); box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  }
   
   /* FORMS */
-  .row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
-  .row > * { flex: 1; min-width: 140px; }
-  label { display: block; font-size: .8rem; color: var(--muted); margin-bottom: 4px; }
+  .row { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 16px; }
+  .row > * { flex: 1; min-width: 150px; }
+  label { display: block; font-size: .8rem; color: var(--muted); margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
   input, select {
-    width: 100%; padding: 10px; background: rgba(0,0,0,0.15); 
-    border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: .9rem;
+    width: 100%; padding: 12px 14px; background: rgba(0,0,0,0.3); 
+    border: 1px solid rgba(224, 176, 200, 0.3); border-radius: 8px; color: var(--text); font-size: 1rem;
+    transition: all 0.2s;
   }
-  input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2); }
+  input:focus, select:focus { 
+    outline: none; 
+    border-color: var(--gold); 
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2); 
+    background: rgba(0,0,0,0.5);
+  }
   
   /* BUTTON */
   .btn {
-    background: var(--gold); color: #000; border: 0; border-radius: 6px;
-    padding: 14px 20px; font-size: 1rem; font-weight: 800; cursor: pointer;
-    width: 100%; margin-top: 16px; transition: background .2s; text-transform: uppercase; letter-spacing: 1px;
+    background: linear-gradient(135deg, var(--gold) 0%, #E5C55A 100%);
+    color: #111; border: 0; border-radius: 8px;
+    padding: 16px 24px; font-size: 1.1rem; font-weight: 800; cursor: pointer;
+    width: 100%; margin-top: 24px; transition: all .2s ease; 
+    text-transform: uppercase; letter-spacing: 1px;
+    box-shadow: 0 4px 15px var(--gold-glow);
   }
-  .btn:hover:not(:disabled) { background: var(--gold-hover); }
-  .btn:disabled { background: #A32B66; color: var(--muted); cursor: not-allowed; opacity: 0.7; }
+  .btn:hover:not(:disabled) { 
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.6);
+  }
+  .btn:disabled { 
+    background: rgba(139, 34, 84, 0.8); 
+    color: rgba(255,255,255,0.3); 
+    cursor: not-allowed; opacity: 0.7; box-shadow: none; transform: none;
+  }
   
   /* STATUS & RESULTS */
-  .status { font-size: .85rem; color: var(--gold); margin-top: 12px; min-height: 20px; font-weight: bold;}
+  .status { font-size: .9rem; color: var(--gold); margin-top: 16px; min-height: 20px; font-weight: bold; text-align: center; letter-spacing: 0.5px;}
   .status.error { color: var(--red); }
-  .signal { display: none; }
-  .signal h2 { font-size: 1.1rem; margin: 0 0 12px; color: var(--gold); }
   
-  .badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: .85rem; font-weight: 800; letter-spacing: .5px; }
-  .badge.long { background: rgba(0, 166, 81, 0.2); color: var(--green); border: 1px solid var(--green); }
-  .badge.short { background: rgba(229, 0, 0, 0.2); color: var(--red); border: 1px solid var(--red); }
-  .badge.neutral { background: rgba(224, 176, 200, 0.15); color: var(--muted); border: 1px solid var(--muted); }
+  .signal { display: none; border: 1px solid var(--gold); box-shadow: 0 0 30px rgba(212, 175, 55, 0.15); }
+  .signal h2 { font-size: 1.2rem; margin: 0 0 16px; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--panel-border); padding-bottom: 10px;}
   
-  .levels { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
-  .level { background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 6px; padding: 12px; }
-  .level span { display: block; font-size: .75rem; color: var(--muted); text-transform: uppercase; margin-bottom: 4px; }
-  .level strong { font-size: 1.1rem; color: var(--text); }
+  .badge { display: inline-block; padding: 8px 16px; border-radius: 8px; font-size: 1rem; font-weight: 900; letter-spacing: 1px; }
+  .badge.long { background: rgba(0, 166, 81, 0.15); color: var(--green); border: 1px solid var(--green); box-shadow: 0 0 15px rgba(0, 166, 81, 0.2); }
+  .badge.short { background: rgba(229, 0, 0, 0.15); color: var(--red); border: 1px solid var(--red); box-shadow: 0 0 15px rgba(229, 0, 0, 0.2); }
+  .badge.neutral { background: rgba(224, 176, 200, 0.1); color: var(--muted); border: 1px solid var(--muted); }
+  
+  .levels { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+  .level { 
+    background: rgba(0,0,0,0.4); border: 1px solid rgba(224, 176, 200, 0.1); 
+    border-radius: 10px; padding: 16px; text-align: center;
+  }
+  .level span { display: block; font-size: .75rem; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; font-weight: 600; letter-spacing: 0.5px;}
+  .level strong { font-size: 1.3rem; color: var(--text); font-family: monospace; }
   .level strong.sl { color: var(--red); }
   .level strong.tp { color: var(--green); }
   
-  .analysis { font-size: .9rem; line-height: 1.5; color: var(--text); margin-top: 16px; background: rgba(0,0,0,0.1); padding: 12px; border-radius: 6px; }
-  .analysis ul { padding-left: 18px; margin: 8px 0; }
+  .analysis { 
+    font-size: .95rem; line-height: 1.6; color: var(--text); margin-top: 20px; 
+    background: rgba(0,0,0,0.3); padding: 16px; border-radius: 10px; border-left: 3px solid var(--gold);
+  }
+  .analysis ul { padding-left: 20px; margin: 10px 0; color: var(--muted); }
+  .analysis li { margin-bottom: 6px; }
+
+  /* Mobile Adjustments */
+  @media (max-width: 500px) {
+    .header { flex-direction: column; text-align: center; gap: 10px; }
+    .brand-text h1 { font-size: 1.8rem; }
+    .levels { grid-template-columns: 1fr; }
+    .panel { padding: 16px; }
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
   
-  <!-- HEADER / LOGO -->
+  <!-- HEADER / BRANDING -->
   <div class="header">
     <img src="logo.png" alt="fxwizzy logo" onerror="this.style.display='none'">
-    <p class="sub">AI Pattern Description. Deterministic Math for Levels.</p>
+    <div class="brand-text">
+      <h1>fxwizzy</h1>
+      <p>AI Chart Analysis</p>
+    </div>
   </div>
 
   <div class="disclaimer">
@@ -121,10 +207,10 @@
   <!-- 1. SCREENSHOT UPLOAD -->
   <div class="panel">
     <div class="dropzone" id="dropzone">
-      <input type="file" id="fileInput" accept="image/*" capture="environment">
+      <input type="file" id="fileInput" accept="image/*">
       <div class="dz-inner">
-        <p><strong>Tap to upload</strong> or drag &amp; drop a chart screenshot</p>
-        <p>TradingView, MT4/MT5, Binance, or any stock chart</p>
+        <p><strong>Tap to upload</strong> or drag &amp; drop a chart</p>
+        <p>Take a photo or choose from gallery</p>
         <img id="preview" alt="Chart preview">
       </div>
     </div>
@@ -148,7 +234,7 @@
     </div>
     <div class="row">
       <div>
-        <label for="price">Current price (from your chart)</label>
+        <label for="price">Current Price (from chart)</label>
         <input id="price" type="number" step="any" placeholder="e.g. 1.08520">
       </div>
       <div>
@@ -165,7 +251,7 @@
         </select>
       </div>
     </div>
-    <button class="btn" id="analyzeBtn" disabled>Analyze Chart</button>
+    <button class="btn" id="analyzeBtn" disabled>Generate Signal</button>
   </div>
 
   <!-- 3. RESULT -->
@@ -204,25 +290,22 @@ function loadFile(file) {
     imageDataUrl = reader.result;
     preview.src = imageDataUrl;
     preview.style.display = 'block';
-    setStatus('Image loaded. Confirm price and settings, then analyze.');
+    setStatus('Image loaded. Confirm price and settings.');
     analyzeBtn.disabled = false;
   };
   reader.readAsDataURL(file);
 }
 
-// File Upload Listeners
 fileInput.addEventListener('change', e => loadFile(e.target.files[0]));
 ['dragenter','dragover'].forEach(ev => dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.add('drag'); }));
 ['dragleave','drop'].forEach(ev => dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.remove('drag'); }));
 dropzone.addEventListener('drop', e => loadFile(e.dataTransfer.files[0]));
 
-// Clipboard Paste Listener
 document.addEventListener('paste', e => {
   const item = [...e.clipboardData.items].find(i => i.type.startsWith('image/'));
   if (item) loadFile(item.getAsFile());
 });
 
-// Analyze Button
 analyzeBtn.addEventListener('click', async () => {
   const symbol = document.getElementById('symbol').value.trim();
   const timeframe = document.getElementById('timeframe').value;
@@ -249,23 +332,21 @@ analyzeBtn.addEventListener('click', async () => {
     if (!res.ok) throw new Error(`Server error ${res.status}`);
     
     const data = await res.json();
-    renderSignal(data, price, rr, symbol, timeframe);
+    renderSignal(data, price, risk, rr, symbol, timeframe);
     setStatus('Analysis complete.');
   } catch (err) {
     console.error(err);
-    setStatus('Network error. Using mechanical fallback calculations.', true);
-    // IF NETWORK FAILS, WE STILL RENDER A MECHANICAL SIGNAL SO IT NEVER FAILS
-    renderSignal({ bias: "neutral", summary: "Network error. AI analysis unavailable. Please review chart manually.", patterns: [], source: "fallback" }, price, rr, symbol, timeframe);
+    setStatus('Network error. Using mechanical fallback.', true);
+    renderSignal({ bias: "neutral", summary: "Network error. AI analysis unavailable. Please review chart manually.", patterns: [], source: "fallback" }, price, risk, rr, symbol, timeframe);
   } finally {
     analyzeBtn.disabled = false;
   }
 });
 
-function renderSignal(data, price, rr, symbol, timeframe) {
+function renderSignal(data, price, risk, rr, symbol, timeframe) {
   const bias = (data.bias || 'neutral').toLowerCase();
   const biasLabel = bias === 'long' ? 'LONG BIAS' : bias === 'short' ? 'SHORT BIAS' : 'NEUTRAL';
 
-  // Deterministic SL/TP calculation based on user-confirmed price (1% stop distance)
   const stopDistance = price * 0.01;
   const tpDistance = stopDistance * rr;
 
@@ -273,11 +354,11 @@ function renderSignal(data, price, rr, symbol, timeframe) {
   if (bias === 'long') {
     sl = price - stopDistance;
     tp = price + tpDistance;
-    directionText = 'Buy';
+    directionText = 'BUY';
   } else if (bias === 'short') {
     sl = price + stopDistance;
     tp = price - tpDistance;
-    directionText = 'Sell';
+    directionText = 'SELL';
   } else {
     sl = tp = null;
   }
@@ -286,20 +367,20 @@ function renderSignal(data, price, rr, symbol, timeframe) {
 
   document.getElementById('bias').innerHTML =
     `<span class="badge ${bias}">${biasLabel}</span>` +
-    ` <span style="color:var(--muted);font-size:.8rem;margin-left:8px">${symbol} · ${timeframe}</span>`;
+    ` <span style="color:var(--muted);font-size:.9rem;margin-left:12px;font-weight:600">${symbol} · ${timeframe}</span>`;
 
   document.getElementById('levels').innerHTML = bias === 'neutral'
     ? `<div class="level" style="grid-column:1/-1;color:var(--muted)">
          <span>Result</span>
-         <strong>No clear AI setup. Wait for confirmation.</strong>
+         <strong style="font-size:1rem">No clear setup. Wait for confirmation.</strong>
        </div>`
     : `
       <div class="level"><span>Direction</span><strong>${directionText}</strong></div>
-      <div class="level"><span>Entry (your price)</span><strong>${fmt(price)}</strong></div>
+      <div class="level"><span>Entry Price</span><strong>${fmt(price)}</strong></div>
       <div class="level"><span>Stop Loss</span><strong class="sl">${fmt(sl)}</strong></div>
       <div class="level"><span>Take Profit</span><strong class="tp">${fmt(tp)}</strong></div>
       <div class="level"><span>Risk : Reward</span><strong>1 : ${rr}</strong></div>
-      <div class="level"><span>Risk Amount</span><strong>${risk}% of equity</strong></div>
+      <div class="level"><span>Risk Amount</span><strong>${risk}%</strong></div>
     `;
 
   const patterns = (data.patterns || []).map(p => `<li>${p}</li>`).join('');
@@ -307,7 +388,7 @@ function renderSignal(data, price, rr, symbol, timeframe) {
     <strong>Grok AI Description:</strong>
     <p>${data.summary || 'No description returned.'}</p>
     ${patterns ? `<strong>Detected Patterns:</strong><ul>${patterns}</ul>` : ''}
-    <p style="color:var(--muted);font-size:.75rem;margin-top:10px;margin-bottom:0">
+    <p style="color:var(--muted);font-size:.75rem;margin-top:12px;margin-bottom:0;border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;">
       * SL/TP levels are calculated deterministically from your confirmed price and risk settings, not generated by AI.
     </p>
   `;
