@@ -3,104 +3,137 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>fxwizzy — Chart Pattern Assistant</title>
+<title>fxwizzy — Chart Signal Assistant</title>
 <style>
+  /* BRAND COLORS FROM LOGO */
   :root {
-    --bg: #0d1117;
-    --panel: #161b22;
-    --border: #30363d;
-    --text: #e6edf3;
-    --muted: #8b949e;
-    --accent: #2f81f7;
-    --green: #3fb950;
-    --red: #f85149;
+    --bg-base: #4a0f29;
+    --bg-main: #7A1C4B;       /* Deep Magenta */
+    --panel: #8B2254;         /* Lighter Magenta */
+    --border: #A32B66;        
+    --text: #FFFFFF;
+    --muted: #E0B0C8;
+    
+    --gold: #D4AF37;          /* Logo Gold */
+    --gold-hover: #E5C55A;
+    --green: #00A651;         /* Logo Green */
+    --red: #E50000;           /* Logo Red */
   }
+
   * { box-sizing: border-box; }
   body {
     margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: var(--bg); color: var(--text); min-height: 100vh; padding: 24px;
+    background: linear-gradient(135deg, var(--bg-base) 0%, var(--bg-main) 100%);
+    color: var(--text); min-height: 100vh; padding: 24px;
   }
   .wrap { max-width: 900px; margin: 0 auto; }
-  h1 { font-size: 1.6rem; margin: 0 0 4px; }
-  .sub { color: var(--muted); font-size: .9rem; margin-bottom: 20px; }
+  
+  /* HEADER / LOGO */
+  .header { text-align: center; margin-bottom: 24px; }
+  .header img {
+    max-width: 260px; width: 100%; border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4); border: 1px solid var(--border);
+  }
+  .sub { color: var(--muted); font-size: .9rem; margin-top: 12px; }
+
   .disclaimer {
-    background: #1c2128; border: 1px solid var(--border); border-left: 3px solid #d29922;
+    background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border); border-left: 3px solid var(--gold);
     padding: 12px 14px; border-radius: 6px; font-size: .82rem; color: var(--muted);
     margin-bottom: 20px;
   }
   .panel {
     background: var(--panel); border: 1px solid var(--border);
     border-radius: 8px; padding: 20px; margin-bottom: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   }
+  
+  /* DROPZONE */
   .dropzone {
-    border: 2px dashed var(--border); border-radius: 8px; padding: 40px 20px;
-    text-align: center; cursor: pointer; transition: border-color .2s;
+    position: relative; border: 2px dashed var(--border); border-radius: 8px;
+    padding: 40px 20px; text-align: center; cursor: pointer; transition: border-color .2s;
+    background: rgba(0,0,0,0.1);
   }
-  .dropzone:hover, .dropzone.drag { border-color: var(--accent); }
-  .dropzone input { display: none; }
-  .dropzone p { margin: 6px 0; color: var(--muted); font-size: .9rem; }
-  #preview { max-width: 100%; border-radius: 6px; margin-top: 12px; display: none; }
-  .btn {
-    background: var(--accent); color: #fff; border: 0; border-radius: 6px;
-    padding: 12px 20px; font-size: .95rem; font-weight: 600; cursor: pointer;
-    width: 100%; margin-top: 12px;
+  .dropzone:hover, .dropzone.drag { border-color: var(--gold); }
+  .dropzone input {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    opacity: 0; cursor: pointer; z-index: 2;
   }
-  .btn:disabled { opacity: .5; cursor: not-allowed; }
-  .row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .dz-inner { pointer-events: none; position: relative; z-index: 1; }
+  .dz-inner p { margin: 6px 0; color: var(--muted); font-size: .9rem; }
+  .dz-inner strong { color: var(--gold); }
+  
+  #preview { max-width: 100%; border-radius: 6px; margin-top: 12px; display: none; border: 1px solid var(--border); }
+  
+  /* FORMS */
+  .row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
   .row > * { flex: 1; min-width: 140px; }
   label { display: block; font-size: .8rem; color: var(--muted); margin-bottom: 4px; }
   input, select {
-    width: 100%; padding: 10px; background: #0d1117; border: 1px solid var(--border);
-    border-radius: 6px; color: var(--text); font-size: .9rem;
+    width: 100%; padding: 10px; background: rgba(0,0,0,0.15); 
+    border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: .9rem;
   }
-  .status { font-size: .85rem; color: var(--muted); margin-top: 12px; min-height: 20px; }
+  input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2); }
+  
+  /* BUTTON */
+  .btn {
+    background: var(--gold); color: #000; border: 0; border-radius: 6px;
+    padding: 14px 20px; font-size: 1rem; font-weight: 800; cursor: pointer;
+    width: 100%; margin-top: 16px; transition: background .2s; text-transform: uppercase; letter-spacing: 1px;
+  }
+  .btn:hover:not(:disabled) { background: var(--gold-hover); }
+  .btn:disabled { background: #A32B66; color: var(--muted); cursor: not-allowed; opacity: 0.7; }
+  
+  /* STATUS & RESULTS */
+  .status { font-size: .85rem; color: var(--gold); margin-top: 12px; min-height: 20px; font-weight: bold;}
   .status.error { color: var(--red); }
   .signal { display: none; }
-  .signal h2 { font-size: 1.1rem; margin: 0 0 12px; }
-  .badge {
-    display: inline-block; padding: 4px 10px; border-radius: 20px;
-    font-size: .75rem; font-weight: 700; letter-spacing: .5px;
-  }
-  .badge.long { background: rgba(63,185,80,.15); color: var(--green); }
-  .badge.short { background: rgba(248,81,73,.15); color: var(--red); }
-  .badge.neutral { background: rgba(139,148,158,.15); color: var(--muted); }
-  .levels { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
-  .level {
-    background: #0d1117; border: 1px solid var(--border); border-radius: 6px;
-    padding: 10px 12px;
-  }
-  .level span { display: block; font-size: .72rem; color: var(--muted); text-transform: uppercase; }
-  .level strong { font-size: 1rem; }
-  .analysis { font-size: .9rem; line-height: 1.5; color: var(--text); margin-top: 14px; }
+  .signal h2 { font-size: 1.1rem; margin: 0 0 12px; color: var(--gold); }
+  
+  .badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: .85rem; font-weight: 800; letter-spacing: .5px; }
+  .badge.long { background: rgba(0, 166, 81, 0.2); color: var(--green); border: 1px solid var(--green); }
+  .badge.short { background: rgba(229, 0, 0, 0.2); color: var(--red); border: 1px solid var(--red); }
+  .badge.neutral { background: rgba(224, 176, 200, 0.15); color: var(--muted); border: 1px solid var(--muted); }
+  
+  .levels { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+  .level { background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 6px; padding: 12px; }
+  .level span { display: block; font-size: .75rem; color: var(--muted); text-transform: uppercase; margin-bottom: 4px; }
+  .level strong { font-size: 1.1rem; color: var(--text); }
+  .level strong.sl { color: var(--red); }
+  .level strong.tp { color: var(--green); }
+  
+  .analysis { font-size: .9rem; line-height: 1.5; color: var(--text); margin-top: 16px; background: rgba(0,0,0,0.1); padding: 12px; border-radius: 6px; }
   .analysis ul { padding-left: 18px; margin: 8px 0; }
-  .analysis li { margin-bottom: 4px; }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>fxwizzy</h1>
-  <p class="sub">Grok Vision describes the chart. Deterministic math calculates your levels.</p>
-
-  <div class="disclaimer">
-    <strong>Not financial advice.</strong> Grok Vision only describes visible chart patterns — it does not
-    read exact prices from screenshots. You confirm the current price, and SL/TP are calculated
-    deterministically from your risk settings. Always verify on your broker before trading.
+  
+  <!-- HEADER / LOGO -->
+  <div class="header">
+    <img src="logo.png" alt="fxwizzy logo" onerror="this.style.display='none'">
+    <p class="sub">AI Pattern Description. Deterministic Math for Levels.</p>
   </div>
 
-  <!-- 1. Screenshot -->
+  <div class="disclaimer">
+    <strong>Not financial advice.</strong> Grok Vision describes the chart. You confirm the current price, and SL/TP are calculated deterministically based on your risk settings. Always verify on your broker before trading.
+  </div>
+
+  <!-- 1. SCREENSHOT UPLOAD -->
   <div class="panel">
-    <label class="dropzone" id="dropzone">
-      <input type="file" id="fileInput" accept="image/*">
-      <p><strong>Tap to upload</strong> or drag &amp; drop a chart screenshot</p>
-      <p>TradingView, MT4/MT5, Binance, or any stock chart</p>
-      <img id="preview" alt="Chart preview">
-    </label>
+    <div class="dropzone" id="dropzone">
+      <input type="file" id="fileInput" accept="image/*" capture="environment">
+      <div class="dz-inner">
+        <p><strong>Tap to upload</strong> or drag &amp; drop a chart screenshot</p>
+        <p>TradingView, MT4/MT5, Binance, or any stock chart</p>
+        <img id="preview" alt="Chart preview">
+      </div>
+    </div>
     <div class="status" id="status"></div>
   </div>
 
-  <!-- 2. Confirm inputs -->
+  <!-- 2. CONFIRM INPUTS -->
   <div class="panel">
-    <div class="row">
+    <div class="row" style="margin-top:0">
       <div>
         <label for="symbol">Asset / Pair</label>
         <input id="symbol" placeholder="e.g. EUR/USD" value="EUR/USD">
@@ -113,7 +146,7 @@
         </select>
       </div>
     </div>
-    <div class="row" style="margin-top:12px">
+    <div class="row">
       <div>
         <label for="price">Current price (from your chart)</label>
         <input id="price" type="number" step="any" placeholder="e.g. 1.08520">
@@ -132,12 +165,12 @@
         </select>
       </div>
     </div>
-    <button class="btn" id="analyzeBtn" disabled>Analyze chart</button>
+    <button class="btn" id="analyzeBtn" disabled>Analyze Chart</button>
   </div>
 
-  <!-- 3. Result -->
+  <!-- 3. RESULT -->
   <div class="panel signal" id="signalPanel">
-    <h2>Result</h2>
+    <h2>Trade Setup</h2>
     <div id="bias"></div>
     <div class="levels" id="levels"></div>
     <div class="analysis" id="analysis"></div>
@@ -145,7 +178,8 @@
 </div>
 
 <script>
-const API_URL = "https://YOUR-BACKEND.example.com/analyze"; // <-- change after deploying backend
+// IMPORTANT: Change this to your deployed backend URL (e.g., Render/Railway)
+const API_URL = "https://YOUR-BACKEND-URL.onrender.com/analyze"; 
 
 const fileInput = document.getElementById('fileInput');
 const dropzone = document.getElementById('dropzone');
@@ -162,14 +196,9 @@ function setStatus(msg, isError = false) {
 }
 
 function loadFile(file) {
-  if (!file || !file.type.startsWith('image/')) {
-    setStatus('Please choose an image file.', true);
-    return;
-  }
-  if (file.size > 8 * 1024 * 1024) {
-    setStatus('Image too large (max 8 MB).', true);
-    return;
-  }
+  if (!file || !file.type.startsWith('image/')) return setStatus('Please choose an image file.', true);
+  if (file.size > 10 * 1024 * 1024) return setStatus('Image too large (max 10 MB).', true);
+  
   const reader = new FileReader();
   reader.onload = () => {
     imageDataUrl = reader.result;
@@ -181,22 +210,19 @@ function loadFile(file) {
   reader.readAsDataURL(file);
 }
 
+// File Upload Listeners
 fileInput.addEventListener('change', e => loadFile(e.target.files[0]));
-
-['dragenter','dragover'].forEach(ev =>
-  dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.add('drag'); })
-);
-['dragleave','drop'].forEach(ev =>
-  dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.remove('drag'); })
-);
+['dragenter','dragover'].forEach(ev => dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.add('drag'); }));
+['dragleave','drop'].forEach(ev => dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.remove('drag'); }));
 dropzone.addEventListener('drop', e => loadFile(e.dataTransfer.files[0]));
 
-// Clipboard paste
+// Clipboard Paste Listener
 document.addEventListener('paste', e => {
   const item = [...e.clipboardData.items].find(i => i.type.startsWith('image/'));
   if (item) loadFile(item.getAsFile());
 });
 
+// Analyze Button
 analyzeBtn.addEventListener('click', async () => {
   const symbol = document.getElementById('symbol').value.trim();
   const timeframe = document.getElementById('timeframe').value;
@@ -210,7 +236,7 @@ analyzeBtn.addEventListener('click', async () => {
   if (!risk || risk <= 0 || risk > 5) return setStatus('Risk must be between 0.1% and 5%.', true);
 
   analyzeBtn.disabled = true;
-  setStatus('Sending chart to Grok Vision…');
+  setStatus('Grok AI is analyzing chart structure...');
   signalPanel.style.display = 'none';
 
   try {
@@ -219,16 +245,17 @@ analyzeBtn.addEventListener('click', async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ image: imageDataUrl, symbol, timeframe, price, risk, rr })
     });
-    if (!res.ok) {
-      const txt = await res.text();
-      throw new Error(`Server error ${res.status}: ${txt.slice(0, 200)}`);
-    }
+    
+    if (!res.ok) throw new Error(`Server error ${res.status}`);
+    
     const data = await res.json();
     renderSignal(data, price, rr, symbol, timeframe);
     setStatus('Analysis complete.');
   } catch (err) {
     console.error(err);
-    setStatus('Failed: ' + err.message, true);
+    setStatus('Network error. Using mechanical fallback calculations.', true);
+    // IF NETWORK FAILS, WE STILL RENDER A MECHANICAL SIGNAL SO IT NEVER FAILS
+    renderSignal({ bias: "neutral", summary: "Network error. AI analysis unavailable. Please review chart manually.", patterns: [], source: "fallback" }, price, rr, symbol, timeframe);
   } finally {
     analyzeBtn.disabled = false;
   }
@@ -238,8 +265,7 @@ function renderSignal(data, price, rr, symbol, timeframe) {
   const bias = (data.bias || 'neutral').toLowerCase();
   const biasLabel = bias === 'long' ? 'LONG BIAS' : bias === 'short' ? 'SHORT BIAS' : 'NEUTRAL';
 
-  // Deterministic SL/TP calculation based on user-confirmed price.
-  // Stop distance = 1% of price (adjust as you like, or derive from ATR later).
+  // Deterministic SL/TP calculation based on user-confirmed price (1% stop distance)
   const stopDistance = price * 0.01;
   const tpDistance = stopDistance * rr;
 
@@ -263,23 +289,26 @@ function renderSignal(data, price, rr, symbol, timeframe) {
     ` <span style="color:var(--muted);font-size:.8rem;margin-left:8px">${symbol} · ${timeframe}</span>`;
 
   document.getElementById('levels').innerHTML = bias === 'neutral'
-    ? `<div class="level" style="grid-column:1/-1;color:var(--muted)">No clear pattern — no levels generated. Wait for confirmation.</div>`
+    ? `<div class="level" style="grid-column:1/-1;color:var(--muted)">
+         <span>Result</span>
+         <strong>No clear AI setup. Wait for confirmation.</strong>
+       </div>`
     : `
       <div class="level"><span>Direction</span><strong>${directionText}</strong></div>
       <div class="level"><span>Entry (your price)</span><strong>${fmt(price)}</strong></div>
-      <div class="level"><span>Stop Loss</span><strong>${fmt(sl)}</strong></div>
-      <div class="level"><span>Take Profit</span><strong>${fmt(tp)}</strong></div>
+      <div class="level"><span>Stop Loss</span><strong class="sl">${fmt(sl)}</strong></div>
+      <div class="level"><span>Take Profit</span><strong class="tp">${fmt(tp)}</strong></div>
       <div class="level"><span>Risk : Reward</span><strong>1 : ${rr}</strong></div>
-      <div class="level"><span>Risk per trade</span><strong>${(price * 0.01 / price * 100).toFixed(1)}% (price-based)</strong></div>
+      <div class="level"><span>Risk Amount</span><strong>${risk}% of equity</strong></div>
     `;
 
   const patterns = (data.patterns || []).map(p => `<li>${p}</li>`).join('');
   document.getElementById('analysis').innerHTML = `
-    <strong>Grok Vision description:</strong>
+    <strong>Grok AI Description:</strong>
     <p>${data.summary || 'No description returned.'}</p>
-    ${patterns ? `<strong>Detected patterns:</strong><ul>${patterns}</ul>` : ''}
-    <p style="color:var(--muted);font-size:.78rem;margin-top:10px">
-      SL/TP are calculated from your confirmed price using fixed risk math — not read by AI.
+    ${patterns ? `<strong>Detected Patterns:</strong><ul>${patterns}</ul>` : ''}
+    <p style="color:var(--muted);font-size:.75rem;margin-top:10px;margin-bottom:0">
+      * SL/TP levels are calculated deterministically from your confirmed price and risk settings, not generated by AI.
     </p>
   `;
   signalPanel.style.display = 'block';
