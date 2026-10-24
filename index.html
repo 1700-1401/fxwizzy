@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FXWizzy - AI Trading Signals & Chart Vision Analyzer</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            bg: '#0D020E',
+                            card: '#18071B',
+                            cardBorder: '#36113C',
+                            magenta: '#D91B5C',
+                            magentaLight: '#F43F5E',
+                            gold: '#D4AF37',
+                            goldHover: '#F59E0B',
+                            green: '#00A86B',
+                            greenBright: '#10B981',
+                            red: '#EF4444'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0D020E;
+            color: #F3F4F6;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(217, 27, 92, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(212, 175, 55, 0.08) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        /* Scanning Animation */
+        .scanner-line {
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #D91B5C, #D4AF37, #10B981, transparent);
+            box-shadow: 0 0 15px #D91B5C, 0 0 25px #D4AF37;
+            animation: scan 2s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+        }
+        @keyframes scan {
+            0% { top: 0%; opacity: 0.8; }
+            100% { top: 96%; opacity: 0.8; }
+        }
+
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #FFF 20%, #D4AF37 60%, #F59E0B 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .magenta-gradient-text {
+            background: linear-gradient(135deg, #FF6B9B 0%, #D91B5C 50%, #880E4F 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Glassmorphic card */
+        .fx-card {
+            background: rgba(24, 7, 27, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(212, 175, 55, 0.18);
+        }
+
+        .fx-card:hover {
+            border-color: rgba(217, 27, 92, 0.4);
+        }
+
+        /* Pulsing Dot */
+        .pulse-dot {
+            animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased flex flex-col justify-between">
+
+    <!-- Top Live Market Ticker -->
+    <div class="bg-brand-card/90 border-b border-brand-cardBorder/60 text-xs py-2 px-4 overflow-hidden whitespace-nowrap">
+        <div class="inline-flex gap-8 animate-marquee text-gray-300 font-mono">
+            <span class="flex items-center gap-1.5"><i class="fa-brands fa-bitcoin text-yellow-500"></i> BTC/USD: <span class="text-brand-greenBright font-bold">$67,420.50 (+3.4%)</span></span>
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-euro-sign text-blue-400"></i> EUR/USD: <span class="text-brand-greenBright font-bold">1.0864 (+0.12%)</span></span>
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-gem text-yellow-400"></i> XAU/USD (Gold): <span class="text-brand-greenBright font-bold">$2,384.10 (+0.85%)</span></span>
+            <span class="flex items-center gap-1.5"><i class="fa-brands fa-apple text-gray-300"></i> AAPL: <span class="text-brand-red font-bold">$224.30 (-0.45%)</span></span>
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-chart-line text-purple-400"></i> ETH/USD: <span class="text-brand-greenBright font-bold">$3,540.00 (+4.1%)</span></span>
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-dollar-sign text-green-400"></i> GBP/USD: <span class="text-brand-greenBright font-bold">1.2980 (+0.08%)</span></span>
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-fire text-orange-500"></i> NVDA: <span class="text-brand-greenBright font-bold">$128.50 (+2.9%)</span></span>
+        </div>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 bg-brand-bg/90 backdrop-blur-md border-b border-brand-cardBorder/80 px-4 md:px-8 py-3 flex items-center justify-between">
+        <!-- Logo Branding -->
+        <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+            <!-- Render User Logo Image or Styled Text Brand -->
+            <div class="relative flex items-center justify-center p-1 rounded-lg bg-gradient-to-r from-brand-magenta/20 to-brand-gold/20 border border-brand-gold/30">
+                <img src="https://lh3.googleusercontent.com/pw/AP1GczN7g--S2aT2jF-0b9f9T-g3PzLp9g0K9w..." id="logoImg" class="h-10 w-auto object-contain rounded" alt="FXWizzy Logo" onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='flex';">
+                <div id="logoFallback" class="hidden items-center font-extrabold text-2xl tracking-tighter">
+                    <span class="text-brand-magenta">fx</span><span class="gold-gradient-text">wiz</span><span class="text-white">z</span><span class="text-brand-green">y</span>
+                </div>
+            </div>
+            <div>
+                <span class="text-xs font-mono tracking-widest uppercase text-brand-gold block font-semibold">AI Vision Trading v3.4</span>
+            </div>
+        </div>
+
+        <!-- Right Quick Controls -->
+        <div class="flex items-center gap-3">
+            <div class="hidden sm:flex items-center gap-2 bg-brand-card border border-brand-cardBorder px-3 py-1.5 rounded-full text-xs">
+                <span class="w-2 h-2 rounded-full bg-brand-greenBright pulse-dot"></span>
+                <span class="text-gray-300 font-medium">AI Core: <span class="text-brand-gold font-bold">Online</span></span>
+            </div>
+            
+            <button onclick="document.getElementById('fileInput').click()" class="bg-gradient-to-r from-brand-magenta to-rose-600 hover:from-rose-600 hover:to-brand-magenta text-white text-xs md:text-sm font-semibold px-4 py-2 rounded-lg shadow-lg shadow-brand-magenta/30 transition-all flex items-center gap-2">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <span>Upload Chart</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 md:px-8 py-8 flex-grow w-full space-y-8">
+
+        <!-- Hero Title Banner -->
+        <div class="text-center space-y-3 max-w-3xl mx-auto">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-magenta/10 border border-brand-magenta/30 text-brand-magentaLight text-xs font-semibold">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Universal Chart Vision AI
+            </div>
+            <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight">
+                Snap Any Chart. Get <span class="gold-gradient-text">Instant Signals.</span> Trade for Profit.
+            </h1>
+            <p class="text-gray-400 text-sm md:text-base">
+                Works on <span class="text-white font-medium">Forex, Crypto, Stocks & Commodities</span>. Upload a screenshot from your device or camera, and FXWizzy automatically calculates Stop Loss, Take Profit & Market Structure.
+            </p>
+        </div>
+
+        <!-- Main Workspace Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+            <!-- LEFT COLUMN: Image Input & Scanning Engine (5 Cols) -->
+            <div class="lg:col-span-5 space-y-6">
+                
+                <div class="fx-card rounded-2xl p-6 relative overflow-hidden shadow-2xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-bold flex items-center gap-2 text-white">
+                            <i class="fa-solid fa-image text-brand-magenta"></i>
+                            Chart Input
+                        </h2>
+                        <span class="text-xs text-gray-400 font-mono">PNG, JPG, WEBP</span>
+                    </div>
+
+                    <!-- Asset & Timeframe Selectors -->
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-400 mb-1">Market Category</label>
+                            <select id="marketType" class="w-full bg-brand-bg border border-brand-cardBorder rounded-lg px-3 py-2 text-xs font-medium text-white focus:outline-none focus:border-brand-gold">
+                                <option value="AUTO">✨ Auto-Detect Pair</option>
+                                <option value="FOREX">💱 Forex Pair</option>
+                                <option value="CRYPTO">₿ Cryptocurrency</option>
+                                <option value="STOCKS">📈 Stocks / Equities</option>
+                                <option value="INDICES">📊 Indices / Gold</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-400 mb-1">Timeframe</label>
+                            <select id="timeframeSelect" class="w-full bg-brand-bg border border-brand-cardBorder rounded-lg px-3 py-2 text-xs font-medium text-white focus:outline-none focus:border-brand-gold">
+                                <option value="AUTO">✨ Auto-Detect Timeframe</option>
+                                <option value="M5">5 Minutes (Scalp)</option>
+                                <option value="M15">15 Minutes (Intraday)</option>
+                                <option value="H1">1 Hour (Swing)</option>
+                                <option value="H4">4 Hours (Day/Swing)</option>
+                                <option value="D1">Daily (Position)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Dropzone Container -->
+                    <div id="dropArea" onclick="document.getElementById('fileInput').click()" 
+                         class="border-2 border-dashed border-brand-cardBorder hover:border-brand-magenta bg-brand-bg/60 rounded-xl p-6 text-center cursor-pointer transition-all relative overflow-hidden min-h-[280px] flex flex-col items-center justify-center group">
+                        
+                        <input type="file" id="fileInput" accept="image/*" class="hidden" onchange="handleFileSelect(event)">
+                        
+                        <!-- Upload Placeholder State -->
+                        <div id="uploadPlaceholder" class="space-y-4">
+                            <div class="w-16 h-16 rounded-full bg-brand-magenta/10 group-hover:bg-brand-magenta/20 flex items-center justify-center mx-auto text-brand-magenta group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-camera-retro text-2xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-gray-200">Click to upload or drag & drop</p>
+                                <p class="text-xs text-gray-500 mt-1">TradingView screenshots, MT4/MT5 photos, or phone screenshots</p>
+                            </div>
+                            <div class="inline-flex items-center gap-2 text-xs font-mono bg-brand-card px-3 py-1.5 rounded-md border border-brand-cardBorder text-brand-gold">
+                                <i class="fa-solid fa-mobile-screen"></i> Gallery / Camera Supported
+                            </div>
+                        </div>
+
+                        <!-- Image Preview & Canvas Overlay -->
+                        <div id="previewContainer" class="hidden absolute inset-0 bg-black flex items-center justify-center">
+                            <img id="chartImage" class="w-full h-full object-contain" src="" alt="Uploaded Trading Chart">
+                            <canvas id="chartCanvas" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
+                            
+                            <!-- Laser Scanning UI Effect -->
+                            <div id="scannerOverlay" class="hidden absolute inset-0 bg-brand-magenta/5">
+                                <div class="scanner-line absolute w-full"></div>
+                                <div class="absolute bottom-3 left-3 bg-brand-card/90 backdrop-blur px-3 py-1.5 rounded text-xs font-mono text-brand-gold flex items-center gap-2 border border-brand-gold/30">
+                                    <i class="fa-solid fa-microchip animate-spin text-brand-magenta"></i>
+                                    <span id="scanStatusText">Detecting Key Support & Resistance...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Demo Sample Charts -->
+                    <div class="mt-4 pt-4 border-t border-brand-cardBorder/50">
+                        <p class="text-xs text-gray-400 mb-2 font-medium">Don't have a screenshot? Try sample charts:</p>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button onclick="loadSampleChart('EURUSD')" class="text-xs bg-brand-card hover:bg-brand-cardBorder text-gray-300 py-1.5 rounded border border-brand-cardBorder/70 transition flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-chart-line text-blue-400"></i> EUR/USD
+                            </button>
+                            <button onclick="loadSampleChart('BTCUSD')" class="text-xs bg-brand-card hover:bg-brand-cardBorder text-gray-300 py-1.5 rounded border border-brand-cardBorder/70 transition flex items-center justify-center gap-1.5">
+                                <i class="fa-brands fa-bitcoin text-yellow-500"></i> BTC/USD
+                            </button>
+                            <button onclick="loadSampleChart('NVDA')" class="text-xs bg-brand-card hover:bg-brand-cardBorder text-gray-300 py-1.5 rounded border border-brand-cardBorder/70 transition flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-bolt text-green-400"></i> NVDA Stock
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Analyze Action Button -->
+                    <button id="analyzeBtn" onclick="runFXWizzyAnalysis()" disabled class="w-full mt-5 bg-gradient-to-r from-brand-gold via-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 disabled:opacity-50 disabled:cursor-not-allowed text-black font-extrabold py-3.5 px-6 rounded-xl shadow-lg shadow-yellow-500/20 text-base transition-all flex items-center justify-center gap-3">
+                        <i class="fa-solid fa-wand-magic-sparkles text-lg"></i>
+                        <span>ANALYZE CHART WITH FXWIZZY</span>
+                    </button>
+                </div>
+
+                <!-- Strategic Advisory Tip Box -->
+                <div class="fx-card rounded-xl p-4 flex gap-3 items-start border-l-4 border-l-brand-gold">
+                    <i class="fa-solid fa-lightbulb text-brand-gold text-xl mt-0.5"></i>
+                    <div class="text-xs space-y-1">
+                        <span class="font-bold text-white block">Pro Tip for Maximum Profit Signal Accuracy:</span>
+                        <p class="text-gray-400">Ensure candlestick colors (red/green or white/black) and price scales on the right side of your screenshot are clearly visible for precise price key-level mapping.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN: Output Signal Dashboard (7 Cols) -->
+            <div class="lg:col-span-7 space-y-6">
+
+                <!-- Default Empty State Placeholder -->
+                <div id="emptySignalState" class="fx-card rounded-2xl p-12 text-center flex flex-col items-center justify-center min-h-[520px] space-y-4">
+                    <div class="w-20 h-20 rounded-full 
