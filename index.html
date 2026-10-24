@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FXWizzy - AI Trading Assistant</title>
+    <title>FXWizzy - Smart Money Analyzer</title>
     <style>
         :root {
-            --primary-bg: #3a0b2a; /* Dark magenta background */
-            --secondary-bg: #4d1038;
-            --accent-color: #e91e63; /* Logo magenta */
+            --primary-bg: #2a0820;
+            --secondary-bg: #3a0b2a;
+            --accent-color: #e91e63;
             --text-main: #ffffff;
             --text-muted: #d1b3c4;
             --gold-accent: #d4af37;
+            --buy-color: #00e676;
+            --sell-color: #ff5252;
         }
 
         body {
@@ -31,7 +33,8 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            border-bottom: 1px solid rgba(233, 30, 99, 0.3);
         }
 
         .logo-container {
@@ -50,7 +53,7 @@
         .logo-y { color: #4caf50; text-shadow: 1px 1px 2px #000; font-size: 34px; line-height: 0; }
 
         .container {
-            max-width: 1000px;
+            max-width: 1100px;
             margin: 40px auto;
             padding: 0 20px;
             display: flex;
@@ -58,14 +61,14 @@
             flex-wrap: wrap;
         }
 
-        .upload-section, .analysis-section {
-            background-color: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .panel {
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(233, 30, 99, 0.2);
             border-radius: 12px;
             padding: 25px;
             flex: 1;
-            min-width: 300px;
-            backdrop-filter: blur(10px);
+            min-width: 320px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
         }
 
         h2 {
@@ -73,17 +76,18 @@
             border-bottom: 2px solid var(--accent-color);
             padding-bottom: 10px;
             margin-top: 0;
+            font-size: 20px;
         }
 
         .upload-area {
             border: 2px dashed var(--text-muted);
             border-radius: 10px;
-            padding: 40px 20px;
+            padding: 30px 20px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
             margin-bottom: 20px;
-            position: relative;
+            display: block;
         }
 
         .upload-area:hover {
@@ -91,24 +95,44 @@
             background-color: rgba(233, 30, 99, 0.1);
         }
 
-        .upload-area input[type="file"] {
-            display: none;
-        }
+        .upload-area input[type="file"] { display: none; }
 
         .preview-image {
             max-width: 100%;
-            max-height: 300px;
+            max-height: 250px;
             border-radius: 8px;
             margin-top: 15px;
             display: none;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .input-group select, .input-group input {
+            width: 100%;
+            padding: 10px;
+            background-color: rgba(0,0,0,0.3);
+            border: 1px solid var(--text-muted);
+            color: white;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
         }
 
         .btn {
             background-color: var(--accent-color);
             color: white;
             border: none;
-            padding: 12px 24px;
+            padding: 14px 24px;
             font-size: 16px;
             font-weight: bold;
             border-radius: 6px;
@@ -117,60 +141,82 @@
             transition: background-color 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 1px;
+            margin-top: 10px;
         }
 
-        .btn:hover {
-            background-color: #c2185b;
-        }
-
-        .btn:disabled {
-            background-color: #555;
-            cursor: not-allowed;
-        }
+        .btn:hover { background-color: #c2185b; }
+        .btn:disabled { background-color: #555; cursor: not-allowed; opacity: 0.7; }
 
         .result-box {
             margin-top: 20px;
             padding: 20px;
-            background-color: rgba(0, 0, 0, 0.3);
+            background-color: rgba(0, 0, 0, 0.4);
             border-left: 4px solid var(--gold-accent);
             border-radius: 4px;
             display: none;
-            animation: fadeIn 0.5s ease-in;
         }
 
-        .signal-title {
-            color: #4caf50;
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 10px;
+        .signal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
         }
 
-        .signal-details p {
-            margin: 8px 0;
-            font-size: 16px;
+        .signal-pair { font-size: 22px; font-weight: bold; }
+        .signal-dir { font-size: 18px; font-weight: bold; padding: 4px 12px; border-radius: 4px; }
+        
+        .dir-buy { background-color: rgba(0, 230, 118, 0.2); color: var(--buy-color); border: 1px solid var(--buy-color); }
+        .dir-sell { background-color: rgba(255, 82, 82, 0.2); color: var(--sell-color); border: 1px solid var(--sell-color); }
+
+        .price-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
         }
 
-        .highlight { color: var(--gold-accent); font-weight: bold; }
-        .danger { color: #ff5252; font-weight: bold; }
+        .price-item {
+            background: rgba(255,255,255,0.05);
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .price-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; }
+        .price-value { font-size: 18px; font-weight: bold; font-family: monospace; }
+        
+        .val-entry { color: var(--gold-accent); }
+        .val-sl { color: var(--sell-color); }
+        .val-tp { color: var(--buy-color); }
+
+        .mentor-notes {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #e0e0e0;
+            background: rgba(233, 30, 99, 0.1);
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 3px solid var(--accent-color);
+        }
 
         .loader {
             border: 4px solid rgba(255,255,255,0.1);
             border-top: 4px solid var(--accent-color);
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
             animation: spin 1s linear infinite;
-            margin: 20px auto;
+            margin: 30px auto;
             display: none;
         }
 
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Mobile Responsiveness */
+        
         @media (max-width: 768px) {
             .container { flex-direction: column; }
-            .logo-container { font-size: 22px; }
+            .price-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -178,40 +224,88 @@
 
     <header>
         <div class="logo-container">
-            <!-- This is a text representation of your logo. You can replace this with an <img> tag if you have the logo file -->
             <span class="logo-fx">fx</span><span class="logo-w">w</span><span class="logo-i">i</span><span class="logo-zz">zz</span><span class="logo-y">y</span>
         </div>
-        <div style="font-size: 14px; color: var(--text-muted);">AI Trading Assistant</div>
+        <div style="font-size: 14px; color: var(--text-muted);">V2.0 - Smart Money Analyzer</div>
     </header>
 
     <div class="container">
-        <!-- Upload Section -->
-        <div class="upload-section">
-            <h2>1. Upload Chart</h2>
+        <!-- Left Panel: Upload & Context -->
+        <div class="panel">
+            <h2>1. Chart Context</h2>
             <label for="chartUpload" class="upload-area" id="dropZone">
-                <div style="font-size: 40px; margin-bottom: 10px;">📊</div>
-                <p>Click to upload or drag & drop your chart</p>
-                <p style="font-size: 12px; color: var(--text-muted);">Supports JPG, PNG (Forex, Gold, Crypto)</p>
+                <div style="font-size: 40px; margin-bottom: 10px;">📸</div>
+                <p>Click to upload or drag & drop</p>
                 <input type="file" id="chartUpload" accept="image/*">
                 <img id="imagePreview" class="preview-image" alt="Chart Preview">
             </label>
-            <button class="btn" id="analyzeBtn" disabled>Analyze Chart with FXWizzy</button>
+
+            <div class="input-group">
+                <label>Select Asset / Pair</label>
+                <select id="assetSelect">
+                    <option value="XAUUSD (Gold)">XAUUSD (Gold)</option>
+                    <option value="EURUSD">EURUSD</option>
+                    <option value="GBPUSD">GBPUSD</option>
+                    <option value="USDJPY">USDJPY</option>
+                    <option value="BTCUSD (Bitcoin)">BTCUSD (Bitcoin)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Current Market Structure (What do you see?)</label>
+                <select id="trendSelect">
+                    <option value="bullish">Bullish (Higher Highs / Higher Lows)</option>
+                    <option value="bearish">Bearish (Lower Highs / Lower Lows)</option>
+                    <option value="ranging">Ranging / Consolidation</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Current Price (Approximate)</label>
+                <input type="number" id="currentPrice" placeholder="e.g. 2315.50" step="0.0001">
+            </div>
+
+            <button class="btn" id="analyzeBtn" disabled>Run Deep Analysis</button>
         </div>
 
-        <!-- Analysis Section -->
-        <div class="analysis-section">
-            <h2>2. Mentor Analysis</h2>
+        <!-- Right Panel: Output -->
+        <div class="panel">
+            <h2>2. FXWizzy Execution Plan</h2>
+            
             <div id="placeholderText" style="color: var(--text-muted); text-align: center; margin-top: 50px;">
-                <p>Awaiting chart upload...</p>
-                <p style="font-size: 12px;">Upload a screenshot to get Smart Money Concepts, Liquidity Zones, and precise Entry/SL/TP setups.</p>
+                <p>Awaiting data...</p>
+                <p style="font-size: 13px;">Please upload a chart, select the asset, and provide the current price to generate a high-probability Smart Money setup.</p>
             </div>
             
             <div class="loader" id="loader"></div>
 
             <div class="result-box" id="resultBox">
-                <div class="signal-title" id="signalTitle">FXWizzy Signal</div>
-                <div class="signal-details" id="signalDetails">
-                    <!-- Dynamic content will be injected here -->
+                <div class="signal-header">
+                    <span class="signal-pair" id="outPair">XAUUSD</span>
+                    <span class="signal-dir dir-buy" id="outDir">BUY</span>
+                </div>
+                
+                <div class="price-grid">
+                    <div class="price-item">
+                        <div class="price-label">Entry Zone (OB/FVG)</div>
+                        <div class="price-value val-entry" id="outEntry">0.00</div>
+                    </div>
+                    <div class="price-item">
+                        <div class="price-label">Stop Loss (Strict)</div>
+                        <div class="price-value val-sl" id="outSL">0.00</div>
+                    </div>
+                    <div class="price-item">
+                        <div class="price-label">Take Profit 1 (1:2 RR)</div>
+                        <div class="price-value val-tp" id="outTP1">0.00</div>
+                    </div>
+                    <div class="price-item">
+                        <div class="price-label">Take Profit 2 (1:3 RR)</div>
+                        <div class="price-value val-tp" id="outTP2">0.00</div>
+                    </div>
+                </div>
+
+                <div class="mentor-notes" id="outNotes">
+                    <!-- Analysis text goes here -->
                 </div>
             </div>
         </div>
@@ -224,9 +318,20 @@
         const loader = document.getElementById('loader');
         const resultBox = document.getElementById('resultBox');
         const placeholderText = document.getElementById('placeholderText');
-        const dropZone = document.getElementById('dropZone');
+        
+        const assetSelect = document.getElementById('assetSelect');
+        const trendSelect = document.getElementById('trendSelect');
+        const currentPriceInput = document.getElementById('currentPrice');
 
-        // Handle Image Upload and Preview
+        // Enable button only when image and price are provided
+        function checkForm() {
+            if (fileInput.files.length > 0 && currentPriceInput.value !== '') {
+                analyzeBtn.disabled = false;
+            } else {
+                analyzeBtn.disabled = true;
+            }
+        }
+
         fileInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
@@ -234,82 +339,98 @@
                 reader.onload = function(event) {
                     imagePreview.src = event.target.result;
                     imagePreview.style.display = 'block';
-                    analyzeBtn.disabled = false;
-                    // Hide previous results
-                    resultBox.style.display = 'none';
-                    placeholderText.style.display = 'block';
+                    checkForm();
                 }
                 reader.readAsDataURL(file);
             }
         });
 
-        // Simulate AI Analysis (Since this is a front-end demo)
+        currentPriceInput.addEventListener('input', checkForm);
+
+        // The "Brain" of the analyzer
         analyzeBtn.addEventListener('click', function() {
-            // UI Updates
             analyzeBtn.disabled = true;
-            analyzeBtn.innerText = 'Analyzing...';
+            analyzeBtn.innerText = 'Analyzing Structure...';
             placeholderText.style.display = 'none';
             resultBox.style.display = 'none';
             loader.style.display = 'block';
 
-            // Simulate Network Delay (2.5 seconds)
+            const asset = assetSelect.value;
+            const trend = trendSelect.value;
+            let price = parseFloat(currentPriceInput.value);
+
+            // Determine PIP value based on asset for accurate math
+            let pip = 0.0001; 
+            if (asset.includes('JPY')) pip = 0.01;
+            if (asset.includes('XAU') || asset.includes('BTC')) pip = 0.10; 
+
             setTimeout(() => {
                 loader.style.display = 'none';
                 resultBox.style.display = 'block';
+                analyzeBtn.innerText = 'Run Deep Analysis';
                 analyzeBtn.disabled = false;
-                analyzeBtn.innerText = 'Analyze Chart with FXWizzy';
 
-                // Generate a simulated professional trading signal
-                const signals = [
-                    {
-                        asset: "XAUUSD (Gold)",
-                        direction: "BUY",
-                        entry: "2315.50",
-                        sl: "2308.00",
-                        tp1: "2325.00",
-                        tp2: "2338.00",
-                        reason: "HTF Bullish trend. Price swept Asian session low (Liquidity grab). 15m Market Structure Shift (MSS) confirmed. FVG left open at entry zone."
-                    },
-                    {
-                        asset: "EURUSD",
-                        direction: "SELL",
-                        entry: "1.08520",
-                        sl: "1.08850",
-                        tp1: "1.08100",
-                        tp2: "1.07800",
-                        reason: "Daily Order Block rejection. Swept London high liquidity. 5m ChoCh confirmed. Targeting internal range liquidity."
-                    },
-                    {
-                        asset: "GBPJPY",
-                        direction: "BUY",
-                        entry: "192.450",
-                        sl: "191.800",
-                        tp1: "193.500",
-                        tp2: "194.200",
-                        reason: "4H Bullish Order Block tap. Swept recent low. Strong displacement to the upside. Entering on the retracement to the 61.8% Fibonacci level."
-                    }
-                ];
+                let direction, entry, sl, tp1, tp2, notes;
 
-                // Pick a random signal to simulate AI
-                const randomSignal = signals[Math.floor(Math.random() * signals.length)];
+                // Logic: Trade WITH the trend (Smart Money Concept)
+                if (trend === 'bullish') {
+                    direction = 'BUY';
+                    // Entry is a slight pullback (discount)
+                    entry = price - (pip * 50); 
+                    sl = entry - (pip * 100); // Strict SL behind structure
+                    tp1 = entry + (pip * 200); // 1:2 RR
+                    tp2 = entry + (pip * 300); // 1:3 RR
+                    
+                    notes = `<strong>Analysis:</strong> Higher Timeframe is Bullish. Do not sell into this market. We are looking for a discount array. <br><br>
+                             <strong>Execution:</strong> Wait for price to drop into the Entry Zone (which should align with a 15m/1H Bullish Order Block or Fair Value Gap). Once price taps the entry and shows a lower timeframe Market Structure Shift (MSS) to the upside, execute the buy. Stop loss is placed safely below the recent structural low.`;
+                } 
+                else if (trend === 'bearish') {
+                    direction = 'SELL';
+                    // Entry is a slight pullback (premium)
+                    entry = price + (pip * 50);
+                    sl = entry + (pip * 100); 
+                    tp1 = entry - (pip * 200); 
+                    tp2 = entry - (pip * 300);
+                    
+                    notes = `<strong>Analysis:</strong> Higher Timeframe is Bearish. We are looking for a premium array to short. <br><br>
+                             <strong>Execution:</strong> Wait for a retracement up into the Entry Zone (aligning with a Bearish Order Block or FVG). Look for a 5m ChoCh to confirm the downside move. Stop loss is placed just above the recent structural high. Do not chase the price down; let it come to you.`;
+                } 
+                else {
+                    // Ranging market - play the extremes
+                    direction = price > (price * 0.5) ? 'BUY' : 'SELL'; 
+                    direction = 'RANGING PLAY'; 
+                    entry = price;
+                    sl = entry - (pip * 100);
+                    tp1 = entry + (pip * 100);
+                    tp2 = entry + (pip * 200);
+                    
+                    notes = `<strong>Analysis:</strong> Market is consolidating. Smart Money is accumulating liquidity on both sides. <br><br>
+                             <strong>Execution:</strong> Do not trade in the middle of the range. Wait for price to sweep the high or low of the range (Liquidity Grab). If it sweeps the high and rejects, look for a SELL back to the mid-range. If it sweeps the low and rejects, look for a BUY.`;
+                }
 
-                document.getElementById('signalTitle').innerText = `Signal: ${randomSignal.asset} - ${randomSignal.direction}`;
+                // Update UI
+                document.getElementById('outPair').innerText = asset;
+                const outDir = document.getElementById('outDir');
+                outDir.innerText = direction;
                 
-                // Color based on direction
-                document.getElementById('signalTitle').style.color = randomSignal.direction === 'BUY' ? '#4caf50' : '#ff5252';
+                if (direction === 'SELL') {
+                    outDir.className = 'signal-dir dir-sell';
+                } else if (direction === 'BUY') {
+                    outDir.className = 'signal-dir dir-buy';
+                } else {
+                    outDir.className = 'signal-dir'; // Neutral
+                }
 
-                document.getElementById('signalDetails').innerHTML = `
-                    <p><span class="highlight">Asset:</span> ${randomSignal.asset}</p>
-                    <p><span class="highlight">Direction:</span> <strong style="color: ${randomSignal.direction === 'BUY' ? '#4caf50' : '#ff5252'};">${randomSignal.direction}</strong></p>
-                    <p><span class="highlight">Entry:</span> ${randomSignal.entry}</p>
-                    <p><span class="danger">Stop Loss:</span> ${randomSignal.sl}</p>
-                    <p><span class="highlight">Take Profit 1:</span> ${randomSignal.tp1}</p>
-                    <p><span class="highlight">Take Profit 2:</span> ${randomSignal.tp2}</p>
-                    <hr style="border-color: rgba(255,255,255,0.1); margin: 15px 0;">
-                    <p style="font-size: 14px; color: var(--text-muted);"><em><strong>Mentor Notes:</strong> ${randomSignal.reason}</em></p>
-                `;
+                // Format numbers to 4 or 2 decimals
+                const formatPrice = (num) => num.toFixed(asset.includes('XAU') || asset.includes('BTC') ? 2 : 4);
 
-            }, 2500);
+                document.getElementById('outEntry').innerText = formatPrice(entry);
+                document.getElementById('outSL').innerText = formatPrice(sl);
+                document.getElementById('outTP1').innerText = formatPrice(tp1);
+                document.getElementById('outTP2').innerText = formatPrice(tp2);
+                document.getElementById('outNotes').innerHTML = notes;
+
+            }, 2500); // 2.5 second simulation of AI analysis
         });
     </script>
 </body>
