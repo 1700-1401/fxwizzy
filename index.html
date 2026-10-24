@@ -3,11 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FXWizzy - AI OCR Chart Analyzer</title>
-    
-    <!-- Import Tesseract.js for automatic image text reading -->
-    <script src='https://unpkg.com/tesseract.js@v4.0.2/dist/tesseract.min.js'></script>
-
+    <title>FXWizzy - Precision SMC Analyzer</title>
     <style>
         :root {
             --primary-bg: #1a0614;
@@ -74,8 +70,6 @@
             flex: 1;
             min-width: 320px;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
-            position: relative;
-            overflow: hidden;
         }
 
         h2 {
@@ -101,7 +95,7 @@
         .upload-area {
             border: 2px dashed var(--text-muted);
             border-radius: 10px;
-            padding: 40px 20px;
+            padding: 30px 20px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -132,23 +126,34 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.6);
         }
 
-        .scanner-line {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background-color: var(--scanner-color);
-            box-shadow: 0 0 15px 3px var(--scanner-color);
-            display: none;
-            animation: scan 1.5s linear infinite;
-            border-radius: 8px;
+        .control-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
         }
 
-        @keyframes scan {
-            0% { top: 0; opacity: 1; }
-            50% { top: 100%; opacity: 0.8; }
-            100% { top: 0; opacity: 1; }
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .input-group select, .input-group input {
+            width: 100%;
+            padding: 12px;
+            background-color: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            border-radius: 6px;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+
+        .input-group select:focus, .input-group input:focus {
+            outline: none;
+            border-color: var(--accent-color);
         }
 
         .btn {
@@ -226,18 +231,10 @@
             border-left: 3px solid var(--accent-color);
         }
 
-        .loader-text {
-            text-align: center;
-            color: var(--scanner-color);
-            font-family: monospace;
-            font-size: 14px;
-            margin-top: 10px;
-            display: none;
-        }
-
         @media (max-width: 768px) {
             .container { flex-direction: column; }
             .price-grid { grid-template-columns: 1fr; }
+            .control-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -247,49 +244,81 @@
         <div class="logo-container">
             <span class="logo-fx">fx</span><span class="logo-w">w</span><span class="logo-i">i</span><span class="logo-zz">zz</span><span class="logo-y">y</span>
         </div>
-        <div style="font-size: 12px; color: var(--scanner-color); display: flex; align-items: center; gap: 5px;">
-            <span style="display:inline-block; width:8px; height:8px; background:var(--scanner-color); border-radius:50%; animation:pulse 1.5s infinite;"></span>
-            Live OCR Engine
-        </div>
+        <div style="font-size: 12px; color: var(--text-muted);">Precision SMC Engine</div>
     </header>
 
     <div class="container">
-        <!-- Left Panel: Upload -->
+        <!-- Left Panel: Input -->
         <div class="panel">
-            <h2>1. Upload Chart <span class="badge" style="background:var(--gold-accent); color:#000;">Auto-Read</span></h2>
+            <h2>1. Chart Context <span class="badge" style="background:var(--gold-accent); color:#000;">Input</span></h2>
             
             <label for="chartUpload" class="upload-area" id="dropZone">
                 <div style="font-size: 40px; margin-bottom: 10px;">📸</div>
-                <p>Click to upload chart screenshot</p>
-                <p style="font-size: 12px; color: var(--text-muted);">AI will scan image for Pair, TF, and Price</p>
+                <p>Upload Chart Screenshot (Optional)</p>
                 <input type="file" id="chartUpload" accept="image/*">
             </label>
 
             <div class="image-container" id="imageContainer">
                 <img id="imagePreview" class="preview-image" alt="Chart Preview">
-                <div class="scanner-line" id="scannerLine"></div>
             </div>
 
-            <button class="btn" id="analyzeBtn" disabled>Scan Image & Analyze</button>
-            <div class="loader-text" id="loaderText">Initializing Tesseract OCR...</div>
+            <div class="control-grid">
+                <div class="input-group">
+                    <label>Asset / Pair</label>
+                    <select id="assetSelect">
+                        <option value="XAUUSD">XAUUSD (Gold)</option>
+                        <option value="EURUSD">EURUSD</option>
+                        <option value="GBPUSD">GBPUSD</option>
+                        <option value="USDJPY">USDJPY</option>
+                        <option value="BTCUSD">BTCUSD</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Timeframe</label>
+                    <select id="tfSelect">
+                        <option value="1M">1 Minute</option>
+                        <option value="5M">5 Minute</option>
+                        <option value="15M" selected>15 Minute</option>
+                        <option value="1H">1 Hour</option>
+                        <option value="4H">4 Hour</option>
+                        <option value="1D">Daily</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="control-grid">
+                <div class="input-group">
+                    <label>Exact Current Price</label>
+                    <input type="number" id="currentPrice" placeholder="e.g. 2315.50" step="0.0001">
+                </div>
+                <div class="input-group">
+                    <label>Market Structure</label>
+                    <select id="trendSelect">
+                        <option value="bullish">Bullish (Higher Highs)</option>
+                        <option value="bearish">Bearish (Lower Lows)</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="btn" id="analyzeBtn" disabled>Calculate Precision Setup</button>
         </div>
 
         <!-- Right Panel: Output -->
         <div class="panel">
-            <h2>2. Execution Plan <span class="badge">AI Generated</span></h2>
+            <h2>2. Execution Plan <span class="badge">Engine</span></h2>
             
             <div id="placeholderText" style="color: var(--text-muted); text-align: center; margin-top: 60px;">
-                <p>Awaiting chart upload...</p>
-                <p style="font-size: 13px;">Upload a chart to let the engine read the Pair, Timeframe, and Current Price automatically.</p>
+                <p>Enter your chart details to generate the setup.</p>
+                <p style="font-size: 13px;">The engine will calculate precise Entry, SL, and TP based on strict Risk-to-Reward and your chosen timeframe.</p>
             </div>
             
             <div class="result-box" id="resultBox">
                 <div class="signal-header">
                     <div>
-                        <div class="signal-pair" id="outPair">Scanning...</div>
-                        <div class="signal-tf" id="outTF">Timeframe: --</div>
+                        <div class="signal-pair" id="outPair">XAUUSD</div>
+                        <div class="signal-tf" id="outTF">Timeframe: 15M</div>
                     </div>
-                    <span class="signal-dir dir-buy" id="outDir">WAIT</span>
+                    <span class="signal-dir dir-buy" id="outDir">BUY</span>
                 </div>
                 
                 <div class="price-grid">
@@ -320,171 +349,113 @@
         const fileInput = document.getElementById('chartUpload');
         const imagePreview = document.getElementById('imagePreview');
         const imageContainer = document.getElementById('imageContainer');
-        const scannerLine = document.getElementById('scannerLine');
         const analyzeBtn = document.getElementById('analyzeBtn');
         const resultBox = document.getElementById('resultBox');
         const placeholderText = document.getElementById('placeholderText');
-        const loaderText = document.getElementById('loaderText');
+        
+        const assetSelect = document.getElementById('assetSelect');
+        const tfSelect = document.getElementById('tfSelect');
+        const currentPriceInput = document.getElementById('currentPrice');
+        const trendSelect = document.getElementById('trendSelect');
 
-        let selectedFile = null;
-
-        // Handle Image Upload
+        // Handle Image Upload (Just for visual confirmation now)
         fileInput.addEventListener('change', function(e) {
-            selectedFile = e.target.files[0];
-            if (selectedFile) {
+            const file = e.target.files[0];
+            if (file) {
                 const reader = new FileReader();
                 reader.onload = function(event) {
                     imagePreview.src = event.target.result;
                     imageContainer.style.display = 'block';
-                    analyzeBtn.disabled = false;
-                    resultBox.style.display = 'none';
-                    placeholderText.style.display = 'block';
                 }
-                reader.readAsDataURL(selectedFile);
+                reader.readAsDataURL(file);
             }
         });
 
-        // The OCR and Analysis Function
-        analyzeBtn.addEventListener('click', async function() {
-            if (!selectedFile) return;
+        // Enable button only when price is entered
+        currentPriceInput.addEventListener('input', function() {
+            if (currentPriceInput.value !== '') {
+                analyzeBtn.disabled = false;
+            } else {
+                analyzeBtn.disabled = true;
+            }
+        });
 
+        // THE EXACT MATH ENGINE
+        analyzeBtn.addEventListener('click', function() {
             analyzeBtn.disabled = true;
-            analyzeBtn.innerText = 'Scanning...';
+            analyzeBtn.innerText = 'Calculating...';
             placeholderText.style.display = 'none';
             resultBox.style.display = 'none';
-            scannerLine.style.display = 'block';
-            loaderText.style.display = 'block';
 
-            try {
-                // 1. RUN OCR ON THE IMAGE
-                loaderText.innerText = "Reading text from image (OCR)...";
-                const { data: { text } } = await Tesseract.recognize(selectedFile, 'eng', {
-                    logger: m => {
-                        if (m.status === 'recognizing text') {
-                            loaderText.innerText = `Reading text... ${Math.round(m.progress * 100)}%`;
-                        }
-                    }
-                });
+            const asset = assetSelect.value;
+            const tf = tfSelect.value;
+            const trend = trendSelect.value;
+            let price = parseFloat(currentPriceInput.value);
 
-                // 2. EXTRACT DATA USING REGEX
-                loaderText.innerText = "Extracting Pair, Timeframe, and Price...";
-                
-                // Convert to uppercase and remove extra spaces for easier reading
-                const cleanText = text.toUpperCase().replace(/\s+/g, ' '); 
+            // Determine PIP value based on asset
+            let pip = 0.0001; 
+            if (asset === 'USDJPY') pip = 0.01;
+            if (asset === 'XAUUSD' || asset === 'BTCUSD') pip = 0.10; 
 
-                // --- Detect Pair ---
-                let detectedPair = "UNKNOWN";
-                const pairs = ["XAUUSD", "EURUSD", "GBPUSD", "USDJPY", "GBPJPY", "BTCUSD", "US30", "NAS100"];
-                for (let pair of pairs) {
-                    if (cleanText.includes(pair)) {
-                        detectedPair = pair;
-                        break;
-                    }
-                }
-                // Fallback if OCR misses it
-                if (detectedPair === "UNKNOWN") detectedPair = "XAUUSD"; 
+            // Adjust pip distance based on Timeframe volatility
+            let tfMultiplier = 1;
+            if (tf === '1M') tfMultiplier = 0.2;
+            if (tf === '5M') tfMultiplier = 0.5;
+            if (tf === '15M') tfMultiplier = 1;
+            if (tf === '1H') tfMultiplier = 2;
+            if (tf === '4H') tfMultiplier = 4;
+            if (tf === '1D') tfMultiplier = 8;
 
-                // --- Detect Timeframe ---
-                let detectedTF = "15M"; // Default
-                const timeframes = ["1M", "5M", "15M", "30M", "1H", "4H", "1D", "DAILY", "WEEKLY"];
-                for (let tf of timeframes) {
-                    if (cleanText.includes(tf)) {
-                        detectedTF = tf;
-                        break;
-                    }
-                }
-
-                // --- Detect Price (Look for numbers with decimals) ---
-                let detectedPrice = null;
-                // Regex looks for numbers like 2315.50 or 1.08520
-                const priceMatches = cleanText.match(/\b\d+\.\d{2,5}\b/g);
-                if (priceMatches && priceMatches.length > 0) {
-                    // Grab the most likely price (often the last one found in the text)
-                    detectedPrice = parseFloat(priceMatches[priceMatches.length - 1]);
-                } else {
-                    // If no price found, assign a default based on the pair
-                    if (detectedPair === 'XAUUSD') detectedPrice = 2350.00;
-                    else if (detectedPair === 'BTCUSD') detectedPrice = 65000.00;
-                    else detectedPrice = 1.08500;
-                }
-
-                // 3. CALCULATE THE TRADE SETUP
-                loaderText.innerText = "Calculating Smart Money Setup...";
-                
-                // Simulate AI trend direction (Randomized 50/50 for this demo, but math is strict)
-                const isBullish = Math.random() > 0.5;
-                const direction = isBullish ? 'BUY' : 'SELL';
-                
-                // Determine Pip Value
-                let pip = 0.0001;
-                if (detectedPair.includes('JPY')) pip = 0.01;
-                if (detectedPair.includes('XAU') || detectedPair.includes('BTC') || detectedPair.includes('US30')) pip = 0.10;
-
-                // Timeframe Multiplier (Higher TF = wider SL/TP)
-                let tfMult = 1;
-                if (detectedTF === '1M' || detectedTF === '5M') tfMult = 0.5;
-                if (detectedTF === '1H') tfMult = 2;
-                if (detectedTF === '4H' || detectedTF === '1D' || detectedTF === 'DAILY') tfMult = 4;
-
-                let entry, sl, tp1, tp2, notes;
-
-                if (direction === 'BUY') {
-                    entry = detectedPrice - (pip * 30 * tfMult);
-                    sl = entry - (pip * 50 * tfMult);
-                    tp1 = entry + (pip * 100 * tfMult);
-                    tp2 = entry + (pip * 150 * tfMult);
-                    notes = `<strong>Analysis:</strong> OCR detected a <strong>${detectedTF}</strong> chart for <strong>${detectedPair}</strong> at current price <strong>${detectedPrice}</strong>. <br><br><strong>Execution:</strong> Bullish bias confirmed. Look for a discount entry (FVG/OB) near the calculated entry zone. Wait for a lower timeframe Market Structure Shift (MSS) to the upside before executing. SL is placed safely below the structural low.`;
-                } else {
-                    entry = detectedPrice + (pip * 30 * tfMult);
-                    sl = entry + (pip * 50 * tfMult);
-                    tp1 = entry - (pip * 100 * tfMult);
-                    tp2 = entry - (pip * 150 * tfMult);
-                    notes = `<strong>Analysis:</strong> OCR detected a <strong>${detectedTF}</strong> chart for <strong>${detectedPair}</strong> at current price <strong>${detectedPrice}</strong>. <br><br><strong>Execution:</strong> Bearish bias confirmed. Look for a premium entry (FVG/OB) near the calculated entry zone. Wait for a lower timeframe ChoCh to confirm the downside. SL is placed safely above the structural high.`;
-                }
-
-                // 4. DISPLAY RESULTS
-                setTimeout(() => {
-                    scannerLine.style.display = 'none';
-                    loaderText.style.display = 'none';
-                    resultBox.style.display = 'block';
-
-                    document.getElementById('outPair').innerText = detectedPair;
-                    document.getElementById('outTF').innerText = `Timeframe: ${detectedTF}`;
-                    
-                    const outDir = document.getElementById('outDir');
-                    outDir.innerText = direction;
-                    outDir.className = direction === 'SELL' ? 'signal-dir dir-sell' : 'signal-dir dir-buy';
-
-                    // Format numbers correctly
-                    const formatPrice = (num) => num.toFixed(detectedPair.includes('JPY') ? 3 : (detectedPair.includes('XAU') || detectedPair.includes('BTC') || detectedPair.includes('US30') ? 2 : 5));
-
-                    document.getElementById('outEntry').innerText = formatPrice(entry);
-                    document.getElementById('outSL').innerText = formatPrice(sl);
-                    document.getElementById('outTP1').innerText = formatPrice(tp1);
-                    document.getElementById('outTP2').innerText = formatPrice(tp2);
-                    document.getElementById('outNotes').innerHTML = notes;
-                    
-                    analyzeBtn.innerText = 'Scan Image & Analyze';
-                    analyzeBtn.disabled = false;
-                }, 500);
-
-            } catch (error) {
-                console.error(error);
-                alert("Error reading image. Please ensure the text is clear.");
-                analyzeBtn.innerText = 'Scan Image & Analyze';
+            setTimeout(() => {
+                resultBox.style.display = 'block';
+                analyzeBtn.innerText = 'Calculate Precision Setup';
                 analyzeBtn.disabled = false;
-                scannerLine.style.display = 'none';
-                loaderText.style.display = 'none';
-            }
+
+                let direction, entry, sl, tp1, tp2, notes;
+
+                // LOGIC: Trade WITH the trend (Smart Money Concept)
+                if (trend === 'bullish') {
+                    direction = 'BUY';
+                    // Entry is a pullback into a discount zone
+                    entry = price - (pip * 30 * tfMultiplier); 
+                    sl = entry - (pip * 50 * tfMultiplier); 
+                    tp1 = entry + (pip * 100 * tfMultiplier); // 1:2 RR
+                    tp2 = entry + (pip * 150 * tfMultiplier); // 1:3 RR
+                    
+                    notes = `<strong>Analysis:</strong> You selected a <strong>${tf}</strong> Bullish structure for <strong>${asset}</strong> at current price <strong>${price}</strong>. Do not sell into this market. <br><br>
+                             <strong>Execution:</strong> Wait for price to drop into the Entry Zone (which should align with a ${tf} Bullish Order Block or Fair Value Gap). Once price taps the entry and shows a lower timeframe Market Structure Shift (MSS) to the upside, execute the buy. Stop loss is placed safely below the recent structural low.`;
+                } 
+                else {
+                    direction = 'SELL';
+                    // Entry is a pullback into a premium zone
+                    entry = price + (pip * 30 * tfMultiplier);
+                    sl = entry + (pip * 50 * tfMultiplier); 
+                    tp1 = entry - (pip * 100 * tfMultiplier); 
+                    tp2 = entry - (pip * 150 * tfMultiplier);
+                    
+                    notes = `<strong>Analysis:</strong> You selected a <strong>${tf}</strong> Bearish structure for <strong>${asset}</strong> at current price <strong>${price}</strong>. We are looking for a premium array to short. <br><br>
+                             <strong>Execution:</strong> Wait for a retracement up into the Entry Zone (aligning with a ${tf} Bearish Order Block or FVG). Look for a lower timeframe ChoCh to confirm the downside move. Stop loss is placed just above the recent structural high. Do not chase the price down; let it come to you.`;
+                }
+
+                // Update UI
+                document.getElementById('outPair').innerText = asset;
+                document.getElementById('outTF').innerText = `Timeframe: ${tf}`;
+                
+                const outDir = document.getElementById('outDir');
+                outDir.innerText = direction;
+                outDir.className = direction === 'SELL' ? 'signal-dir dir-sell' : 'signal-dir dir-buy';
+
+                // Format numbers based on asset type
+                const formatPrice = (num) => num.toFixed(asset.includes('JPY') ? 3 : (asset.includes('XAU') || asset.includes('BTC') ? 2 : 5));
+
+                document.getElementById('outEntry').innerText = formatPrice(entry);
+                document.getElementById('outSL').innerText = formatPrice(sl);
+                document.getElementById('outTP1').innerText = formatPrice(tp1);
+                document.getElementById('outTP2').innerText = formatPrice(tp2);
+                document.getElementById('outNotes').innerHTML = notes;
+
+            }, 1000); 
         });
     </script>
-    
-    <style>
-        @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(0, 229, 255, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 229, 255, 0); }
-        }
-    </style>
 </body>
 </html>
