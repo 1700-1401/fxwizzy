@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FXWizzy - Smart Money Analyzer</title>
+    <title>FXWizzy - Auto AI Analyzer</title>
     <style>
         :root {
-            --primary-bg: #2a0820;
-            --secondary-bg: #3a0b2a;
+            --primary-bg: #1a0614;
+            --secondary-bg: #2a0820;
             --accent-color: #e91e63;
             --text-main: #ffffff;
-            --text-muted: #d1b3c4;
+            --text-muted: #b39ba8;
             --gold-accent: #d4af37;
             --buy-color: #00e676;
             --sell-color: #ff5252;
+            --scanner-color: #00e5ff;
         }
 
         body {
@@ -25,6 +26,7 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         header {
@@ -33,7 +35,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.6);
             border-bottom: 1px solid rgba(233, 30, 99, 0.3);
         }
 
@@ -68,7 +70,9 @@
             padding: 25px;
             flex: 1;
             min-width: 320px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
         }
 
         h2 {
@@ -77,17 +81,30 @@
             padding-bottom: 10px;
             margin-top: 0;
             font-size: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .auto-badge {
+            background: var(--accent-color);
+            font-size: 10px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            color: white;
+            align-self: center;
         }
 
         .upload-area {
             border: 2px dashed var(--text-muted);
             border-radius: 10px;
-            padding: 30px 20px;
+            padding: 40px 20px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
             margin-bottom: 20px;
             display: block;
+            position: relative;
         }
 
         .upload-area:hover {
@@ -97,35 +114,39 @@
 
         .upload-area input[type="file"] { display: none; }
 
+        .image-container {
+            position: relative;
+            display: none;
+            margin-top: 15px;
+        }
+
         .preview-image {
             max-width: 100%;
-            max-height: 250px;
+            max-height: 300px;
             border-radius: 8px;
-            margin-top: 15px;
-            display: none;
+            display: block;
+            margin: 0 auto;
             box-shadow: 0 4px 15px rgba(0,0,0,0.6);
         }
 
-        .input-group {
-            margin-bottom: 15px;
-        }
-
-        .input-group label {
-            display: block;
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-bottom: 5px;
-        }
-
-        .input-group select, .input-group input {
+        /* Scanning Animation */
+        .scanner-line {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            padding: 10px;
-            background-color: rgba(0,0,0,0.3);
-            border: 1px solid var(--text-muted);
-            color: white;
-            border-radius: 6px;
-            font-size: 16px;
-            box-sizing: border-box;
+            height: 3px;
+            background-color: var(--scanner-color);
+            box-shadow: 0 0 15px 3px var(--scanner-color);
+            display: none;
+            animation: scan 1.5s linear infinite;
+            border-radius: 8px;
+        }
+
+        @keyframes scan {
+            0% { top: 0; opacity: 1; }
+            50% { top: 100%; opacity: 0.8; }
+            100% { top: 0; opacity: 1; }
         }
 
         .btn {
@@ -138,19 +159,20 @@
             border-radius: 6px;
             cursor: pointer;
             width: 100%;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-top: 10px;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4);
         }
 
-        .btn:hover { background-color: #c2185b; }
-        .btn:disabled { background-color: #555; cursor: not-allowed; opacity: 0.7; }
+        .btn:hover { background-color: #c2185b; transform: translateY(-2px); }
+        .btn:disabled { background-color: #555; cursor: not-allowed; transform: none; box-shadow: none; }
 
         .result-box {
-            margin-top: 20px;
+            margin-top: 10px;
             padding: 20px;
-            background-color: rgba(0, 0, 0, 0.4);
+            background-color: rgba(0, 0, 0, 0.5);
             border-left: 4px solid var(--gold-accent);
             border-radius: 4px;
             display: none;
@@ -165,11 +187,12 @@
             margin-bottom: 15px;
         }
 
-        .signal-pair { font-size: 22px; font-weight: bold; }
-        .signal-dir { font-size: 18px; font-weight: bold; padding: 4px 12px; border-radius: 4px; }
+        .signal-pair { font-size: 24px; font-weight: bold; letter-spacing: 1px; }
+        .signal-tf { font-size: 14px; color: var(--text-muted); margin-top: 5px; }
+        .signal-dir { font-size: 18px; font-weight: bold; padding: 6px 15px; border-radius: 4px; }
         
-        .dir-buy { background-color: rgba(0, 230, 118, 0.2); color: var(--buy-color); border: 1px solid var(--buy-color); }
-        .dir-sell { background-color: rgba(255, 82, 82, 0.2); color: var(--sell-color); border: 1px solid var(--sell-color); }
+        .dir-buy { background-color: rgba(0, 230, 118, 0.15); color: var(--buy-color); border: 1px solid var(--buy-color); }
+        .dir-sell { background-color: rgba(255, 82, 82, 0.15); color: var(--sell-color); border: 1px solid var(--sell-color); }
 
         .price-grid {
             display: grid;
@@ -180,12 +203,13 @@
 
         .price-item {
             background: rgba(255,255,255,0.05);
-            padding: 10px;
+            padding: 12px;
             border-radius: 6px;
+            border-left: 2px solid rgba(255,255,255,0.1);
         }
 
-        .price-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; }
-        .price-value { font-size: 18px; font-weight: bold; font-family: monospace; }
+        .price-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .price-value { font-size: 20px; font-weight: bold; font-family: 'Courier New', Courier, monospace; }
         
         .val-entry { color: var(--gold-accent); }
         .val-sl { color: var(--sell-color); }
@@ -195,25 +219,21 @@
             font-size: 14px;
             line-height: 1.6;
             color: #e0e0e0;
-            background: rgba(233, 30, 99, 0.1);
+            background: rgba(233, 30, 99, 0.05);
             padding: 15px;
             border-radius: 6px;
             border-left: 3px solid var(--accent-color);
         }
 
-        .loader {
-            border: 4px solid rgba(255,255,255,0.1);
-            border-top: 4px solid var(--accent-color);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 30px auto;
+        .loader-text {
+            text-align: center;
+            color: var(--scanner-color);
+            font-family: monospace;
+            font-size: 14px;
+            margin-top: 10px;
             display: none;
         }
 
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
         @media (max-width: 768px) {
             .container { flex-direction: column; }
             .price-grid { grid-template-columns: 1fr; }
@@ -226,62 +246,49 @@
         <div class="logo-container">
             <span class="logo-fx">fx</span><span class="logo-w">w</span><span class="logo-i">i</span><span class="logo-zz">zz</span><span class="logo-y">y</span>
         </div>
-        <div style="font-size: 14px; color: var(--text-muted);">V2.0 - Smart Money Analyzer</div>
+        <div style="font-size: 12px; color: var(--scanner-color); display: flex; align-items: center; gap: 5px;">
+            <span style="display:inline-block; width:8px; height:8px; background:var(--scanner-color); border-radius:50%; animation: pulse 1.5s infinite;"></span>
+            Auto-Scan Engine Active
+        </div>
     </header>
 
     <div class="container">
-        <!-- Left Panel: Upload & Context -->
+        <!-- Left Panel: Upload -->
         <div class="panel">
-            <h2>1. Chart Context</h2>
+            <h2>1. Upload Chart <span class="auto-badge">Auto-Detect</span></h2>
+            
             <label for="chartUpload" class="upload-area" id="dropZone">
                 <div style="font-size: 40px; margin-bottom: 10px;">📸</div>
-                <p>Click to upload or drag & drop</p>
+                <p>Click to upload chart screenshot</p>
+                <p style="font-size: 12px; color: var(--text-muted);">AI will automatically extract Pair, TF, and Price</p>
                 <input type="file" id="chartUpload" accept="image/*">
-                <img id="imagePreview" class="preview-image" alt="Chart Preview">
             </label>
 
-            <div class="input-group">
-                <label>Select Asset / Pair</label>
-                <select id="assetSelect">
-                    <option value="XAUUSD (Gold)">XAUUSD (Gold)</option>
-                    <option value="EURUSD">EURUSD</option>
-                    <option value="GBPUSD">GBPUSD</option>
-                    <option value="USDJPY">USDJPY</option>
-                    <option value="BTCUSD (Bitcoin)">BTCUSD (Bitcoin)</option>
-                </select>
+            <div class="image-container" id="imageContainer">
+                <img id="imagePreview" class="preview-image" alt="Chart Preview">
+                <div class="scanner-line" id="scannerLine"></div>
             </div>
 
-            <div class="input-group">
-                <label>Current Market Structure (What do you see?)</label>
-                <select id="trendSelect">
-                    <option value="bullish">Bullish (Higher Highs / Higher Lows)</option>
-                    <option value="bearish">Bearish (Lower Highs / Lower Lows)</option>
-                    <option value="ranging">Ranging / Consolidation</option>
-                </select>
-            </div>
-
-            <div class="input-group">
-                <label>Current Price (Approximate)</label>
-                <input type="number" id="currentPrice" placeholder="e.g. 2315.50" step="0.0001">
-            </div>
-
-            <button class="btn" id="analyzeBtn" disabled>Run Deep Analysis</button>
+            <button class="btn" id="analyzeBtn" disabled>Scan & Analyze Chart</button>
+            <div class="loader-text" id="loaderText">Initializing Vision API...</div>
         </div>
 
         <!-- Right Panel: Output -->
         <div class="panel">
-            <h2>2. FXWizzy Execution Plan</h2>
+            <h2>2. Execution Plan <span class="auto-badge" style="background:var(--gold-accent); color:#000;">AI Generated</span></h2>
             
-            <div id="placeholderText" style="color: var(--text-muted); text-align: center; margin-top: 50px;">
-                <p>Awaiting data...</p>
-                <p style="font-size: 13px;">Please upload a chart, select the asset, and provide the current price to generate a high-probability Smart Money setup.</p>
+            <div id="placeholderText" style="color: var(--text-muted); text-align: center; margin-top: 60px;">
+                <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.5; margin-bottom: 15px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <p>Awaiting image scan...</p>
+                <p style="font-size: 13px;">Our AI vision engine will read the chart, identify the market structure, and output a precise Entry, SL, and TP.</p>
             </div>
             
-            <div class="loader" id="loader"></div>
-
             <div class="result-box" id="resultBox">
                 <div class="signal-header">
-                    <span class="signal-pair" id="outPair">XAUUSD</span>
+                    <div>
+                        <div class="signal-pair" id="outPair">XAUUSD</div>
+                        <div class="signal-tf" id="outTF">Timeframe: 15M</div>
+                    </div>
                     <span class="signal-dir dir-buy" id="outDir">BUY</span>
                 </div>
                 
@@ -304,9 +311,7 @@
                     </div>
                 </div>
 
-                <div class="mentor-notes" id="outNotes">
-                    <!-- Analysis text goes here -->
-                </div>
+                <div class="mentor-notes" id="outNotes"></div>
             </div>
         </div>
     </div>
@@ -314,124 +319,133 @@
     <script>
         const fileInput = document.getElementById('chartUpload');
         const imagePreview = document.getElementById('imagePreview');
+        const imageContainer = document.getElementById('imageContainer');
+        const scannerLine = document.getElementById('scannerLine');
         const analyzeBtn = document.getElementById('analyzeBtn');
-        const loader = document.getElementById('loader');
         const resultBox = document.getElementById('resultBox');
         const placeholderText = document.getElementById('placeholderText');
-        
-        const assetSelect = document.getElementById('assetSelect');
-        const trendSelect = document.getElementById('trendSelect');
-        const currentPriceInput = document.getElementById('currentPrice');
+        const loaderText = document.getElementById('loaderText');
 
-        // Enable button only when image and price are provided
-        function checkForm() {
-            if (fileInput.files.length > 0 && currentPriceInput.value !== '') {
-                analyzeBtn.disabled = false;
-            } else {
-                analyzeBtn.disabled = true;
-            }
-        }
-
+        // Handle Image Upload
         fileInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(event) {
                     imagePreview.src = event.target.result;
-                    imagePreview.style.display = 'block';
-                    checkForm();
+                    imageContainer.style.display = 'block';
+                    analyzeBtn.disabled = false;
+                    // Hide previous results
+                    resultBox.style.display = 'none';
+                    placeholderText.style.display = 'block';
                 }
                 reader.readAsDataURL(file);
             }
         });
 
-        currentPriceInput.addEventListener('input', checkForm);
-
-        // The "Brain" of the analyzer
+        // The Automated AI Analysis Simulation
         analyzeBtn.addEventListener('click', function() {
             analyzeBtn.disabled = true;
-            analyzeBtn.innerText = 'Analyzing Structure...';
+            analyzeBtn.innerText = 'Scanning Image...';
             placeholderText.style.display = 'none';
             resultBox.style.display = 'none';
-            loader.style.display = 'block';
+            
+            // Start Scanning Animation
+            scannerLine.style.display = 'block';
+            loaderText.style.display = 'block';
+            
+            const loadingSteps = [
+                "Extracting OCR text (Pair & Price)...",
+                "Analyzing candle patterns...",
+                "Detecting Liquidity Sweeps...",
+                "Mapping Order Blocks & FVGs...",
+                "Calculating Risk-to-Reward..."
+            ];
 
-            const asset = assetSelect.value;
-            const trend = trendSelect.value;
-            let price = parseFloat(currentPriceInput.value);
+            let step = 0;
+            const stepInterval = setInterval(() => {
+                loaderText.innerText = loadingSteps[step];
+                step++;
+                if (step >= loadingSteps.length) clearInterval(stepInterval);
+            }, 600);
 
-            // Determine PIP value based on asset for accurate math
-            let pip = 0.0001; 
-            if (asset.includes('JPY')) pip = 0.01;
-            if (asset.includes('XAU') || asset.includes('BTC')) pip = 0.10; 
-
+            // Simulate the AI processing time
             setTimeout(() => {
-                loader.style.display = 'none';
+                clearInterval(stepInterval);
+                scannerLine.style.display = 'none';
+                loaderText.style.display = 'none';
                 resultBox.style.display = 'block';
-                analyzeBtn.innerText = 'Run Deep Analysis';
+                analyzeBtn.innerText = 'Scan & Analyze Chart';
                 analyzeBtn.disabled = false;
 
-                let direction, entry, sl, tp1, tp2, notes;
+                // SIMULATED AI OUTPUT
+                // In a real app, this data would come from OpenAI Vision API or a Python backend
+                const aiScenarios = [
+                    {
+                        pair: "XAUUSD (Gold)",
+                        tf: "15M",
+                        dir: "BUY",
+                        entry: 2318.50,
+                        sl: 2312.00,
+                        tp1: 2330.00,
+                        tp2: 2338.00,
+                        notes: "<strong>AI Vision Analysis:</strong> Detected Bullish Market Structure on the 15M chart. Price has recently swept a short-term low (Liquidity Grab) and immediately displaced upwards, leaving a Fair Value Gap (FVG). <br><br><strong>Execution:</strong> Limit order placed at the 50% fill of the FVG. Stop loss is protected below the recent swing low. Targets are based on the next liquidity pool."
+                    },
+                    {
+                        pair: "EURUSD",
+                        tf: "1H",
+                        dir: "SELL",
+                        entry: 1.08420,
+                        sl: 1.08750,
+                        tp1: 1.07800,
+                        tp2: 1.07400,
+                        notes: "<strong>AI Vision Analysis:</strong> Detected Bearish structure on the 1H chart. Price tapped into a clear Supply Order Block (Premium zone). <br><br><strong>Execution:</strong> Short bias confirmed by a Change of Character (ChoCh) on the 15M timeframe. Entry is set at the Order Block retest. Stop loss is above the structural high. Targeting internal range liquidity."
+                    },
+                    {
+                        pair: "GBPJPY",
+                        tf: "4H",
+                        dir: "BUY",
+                        entry: 192.150,
+                        sl: 191.300,
+                        tp1: 193.800,
+                        tp2: 194.500,
+                        notes: "<strong>AI Vision Analysis:</strong> Scanned chart reveals strong bullish momentum on the 4H timeframe. Price is currently retracing to a Demand Order Block. <br><br><strong>Execution:</strong> Awaiting a 5M Market Structure Shift (MSS) inside the entry zone to confirm the buy. Stop loss is deeply protected to avoid wick sweeps. Risk is capped at 1% of equity."
+                    }
+                ];
 
-                // Logic: Trade WITH the trend (Smart Money Concept)
-                if (trend === 'bullish') {
-                    direction = 'BUY';
-                    // Entry is a slight pullback (discount)
-                    entry = price - (pip * 50); 
-                    sl = entry - (pip * 100); // Strict SL behind structure
-                    tp1 = entry + (pip * 200); // 1:2 RR
-                    tp2 = entry + (pip * 300); // 1:3 RR
-                    
-                    notes = `<strong>Analysis:</strong> Higher Timeframe is Bullish. Do not sell into this market. We are looking for a discount array. <br><br>
-                             <strong>Execution:</strong> Wait for price to drop into the Entry Zone (which should align with a 15m/1H Bullish Order Block or Fair Value Gap). Once price taps the entry and shows a lower timeframe Market Structure Shift (MSS) to the upside, execute the buy. Stop loss is placed safely below the recent structural low.`;
-                } 
-                else if (trend === 'bearish') {
-                    direction = 'SELL';
-                    // Entry is a slight pullback (premium)
-                    entry = price + (pip * 50);
-                    sl = entry + (pip * 100); 
-                    tp1 = entry - (pip * 200); 
-                    tp2 = entry - (pip * 300);
-                    
-                    notes = `<strong>Analysis:</strong> Higher Timeframe is Bearish. We are looking for a premium array to short. <br><br>
-                             <strong>Execution:</strong> Wait for a retracement up into the Entry Zone (aligning with a Bearish Order Block or FVG). Look for a 5m ChoCh to confirm the downside move. Stop loss is placed just above the recent structural high. Do not chase the price down; let it come to you.`;
-                } 
-                else {
-                    // Ranging market - play the extremes
-                    direction = price > (price * 0.5) ? 'BUY' : 'SELL'; 
-                    direction = 'RANGING PLAY'; 
-                    entry = price;
-                    sl = entry - (pip * 100);
-                    tp1 = entry + (pip * 100);
-                    tp2 = entry + (pip * 200);
-                    
-                    notes = `<strong>Analysis:</strong> Market is consolidating. Smart Money is accumulating liquidity on both sides. <br><br>
-                             <strong>Execution:</strong> Do not trade in the middle of the range. Wait for price to sweep the high or low of the range (Liquidity Grab). If it sweeps the high and rejects, look for a SELL back to the mid-range. If it sweeps the low and rejects, look for a BUY.`;
-                }
+                // Randomly select one to simulate the AI "seeing" different charts
+                const result = aiScenarios[Math.floor(Math.random() * aiScenarios.length)];
 
-                // Update UI
-                document.getElementById('outPair').innerText = asset;
-                const outDir = document.getElementById('outDir');
-                outDir.innerText = direction;
+                // Populate UI
+                document.getElementById('outPair').innerText = result.pair;
+                document.getElementById('outTF').innerText = `Timeframe: ${result.tf}`;
                 
-                if (direction === 'SELL') {
+                const outDir = document.getElementById('outDir');
+                outDir.innerText = result.dir;
+                
+                if (result.dir === 'SELL') {
                     outDir.className = 'signal-dir dir-sell';
-                } else if (direction === 'BUY') {
-                    outDir.className = 'signal-dir dir-buy';
                 } else {
-                    outDir.className = 'signal-dir'; // Neutral
+                    outDir.className = 'signal-dir dir-buy';
                 }
 
-                // Format numbers to 4 or 2 decimals
-                const formatPrice = (num) => num.toFixed(asset.includes('XAU') || asset.includes('BTC') ? 2 : 4);
+                document.getElementById('outEntry').innerText = result.entry.toFixed(result.pair.includes('JPY') ? 3 : 4);
+                document.getElementById('outSL').innerText = result.sl.toFixed(result.pair.includes('JPY') ? 3 : 4);
+                document.getElementById('outTP1').innerText = result.tp1.toFixed(result.pair.includes('JPY') ? 3 : 4);
+                document.getElementById('outTP2').innerText = result.tp2.toFixed(result.pair.includes('JPY') ? 3 : 4);
+                
+                document.getElementById('outNotes').innerHTML = result.notes;
 
-                document.getElementById('outEntry').innerText = formatPrice(entry);
-                document.getElementById('outSL').innerText = formatPrice(sl);
-                document.getElementById('outTP1').innerText = formatPrice(tp1);
-                document.getElementById('outTP2').innerText = formatPrice(tp2);
-                document.getElementById('outNotes').innerHTML = notes;
-
-            }, 2500); // 2.5 second simulation of AI analysis
+            }, 4000); // 4 second total simulation
         });
     </script>
+    
+    <style>
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(0, 229, 255, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 229, 255, 0); }
+        }
+    </style>
 </body>
 </html>
