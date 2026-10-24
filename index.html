@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" class="dark scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FXWizzy - AI Trading Signals & Chart Vision Analyzer</title>
+    <title>FXWizzy — AI Trading Vision & Screenshot Signal Engine</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome 6 Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script>
@@ -18,11 +18,13 @@
                 extend: {
                     colors: {
                         brand: {
-                            bg: '#0D020E',
-                            card: '#18071B',
-                            cardBorder: '#36113C',
+                            bg: '#0A010C',
+                            card: '#16061B',
+                            cardHover: '#210928',
+                            cardBorder: '#34103E',
                             magenta: '#D91B5C',
-                            magentaLight: '#F43F5E',
+                            magentaLight: '#FF2E7E',
+                            magentaDark: '#990E3C',
                             gold: '#D4AF37',
                             goldHover: '#F59E0B',
                             green: '#00A86B',
@@ -40,50 +42,49 @@
     </script>
     <style>
         body {
-            background-color: #0D020E;
+            background-color: #0A010C;
             color: #F3F4F6;
             background-image: 
-                radial-gradient(circle at 15% 15%, rgba(217, 27, 92, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 85% 85%, rgba(212, 175, 55, 0.08) 0%, transparent 40%);
+                radial-gradient(circle at 8% 8%, rgba(217, 27, 92, 0.22) 0%, transparent 45%),
+                radial-gradient(circle at 92% 92%, rgba(212, 175, 55, 0.15) 0%, transparent 45%);
             background-attachment: fixed;
         }
 
-        /* Scanning Animation */
+        /* Laser Scanner Line Animation */
         .scanner-line {
             height: 4px;
             background: linear-gradient(90deg, transparent, #D91B5C, #D4AF37, #10B981, transparent);
-            box-shadow: 0 0 15px #D91B5C, 0 0 25px #D4AF37;
-            animation: scan 2s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+            box-shadow: 0 0 18px #D91B5C, 0 0 30px #D4AF37;
+            animation: scan 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
         }
         @keyframes scan {
-            0% { top: 0%; opacity: 0.8; }
-            100% { top: 96%; opacity: 0.8; }
+            0% { top: 2%; opacity: 0.95; }
+            100% { top: 96%; opacity: 0.95; }
         }
 
         .gold-gradient-text {
-            background: linear-gradient(135deg, #FFF 20%, #D4AF37 60%, #F59E0B 100%);
+            background: linear-gradient(135deg, #FFF 10%, #FFE57F 40%, #D4AF37 80%, #996515 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .magenta-gradient-text {
-            background: linear-gradient(135deg, #FF6B9B 0%, #D91B5C 50%, #880E4F 100%);
+            background: linear-gradient(135deg, #FF6B9B 0%, #D91B5C 60%, #880E4F 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        /* Glassmorphic card */
         .fx-card {
-            background: rgba(24, 7, 27, 0.75);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(212, 175, 55, 0.18);
+            background: rgba(22, 6, 27, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(212, 175, 55, 0.22);
+            transition: border-color 0.3s ease, transform 0.2s ease;
         }
 
         .fx-card:hover {
-            border-color: rgba(217, 27, 92, 0.4);
+            border-color: rgba(217, 27, 92, 0.5);
         }
 
-        /* Pulsing Dot */
         .pulse-dot {
             animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
         }
@@ -92,99 +93,169 @@
             70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
+
+        @keyframes marquee {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            display: inline-flex;
+            animation: marquee 30s linear infinite;
+        }
+        .animate-marquee:hover {
+            animation-play-state: paused;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0A010C;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #34103E;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #D91B5C;
+        }
     </style>
 </head>
-<body class="min-h-screen font-sans antialiased flex flex-col justify-between">
+<body class="min-h-screen font-sans antialiased flex flex-col justify-between selection:bg-brand-magenta selection:text-white">
 
-    <!-- Top Live Market Ticker -->
-    <div class="bg-brand-card/90 border-b border-brand-cardBorder/60 text-xs py-2 px-4 overflow-hidden whitespace-nowrap">
-        <div class="inline-flex gap-8 animate-marquee text-gray-300 font-mono">
-            <span class="flex items-center gap-1.5"><i class="fa-brands fa-bitcoin text-yellow-500"></i> BTC/USD: <span class="text-brand-greenBright font-bold">$67,420.50 (+3.4%)</span></span>
-            <span class="flex items-center gap-1.5"><i class="fa-solid fa-euro-sign text-blue-400"></i> EUR/USD: <span class="text-brand-greenBright font-bold">1.0864 (+0.12%)</span></span>
-            <span class="flex items-center gap-1.5"><i class="fa-solid fa-gem text-yellow-400"></i> XAU/USD (Gold): <span class="text-brand-greenBright font-bold">$2,384.10 (+0.85%)</span></span>
-            <span class="flex items-center gap-1.5"><i class="fa-brands fa-apple text-gray-300"></i> AAPL: <span class="text-brand-red font-bold">$224.30 (-0.45%)</span></span>
-            <span class="flex items-center gap-1.5"><i class="fa-solid fa-chart-line text-purple-400"></i> ETH/USD: <span class="text-brand-greenBright font-bold">$3,540.00 (+4.1%)</span></span>
-            <span class="flex items-center gap-1.5"><i class="fa-solid fa-dollar-sign text-green-400"></i> GBP/USD: <span class="text-brand-greenBright font-bold">1.2980 (+0.08%)</span></span>
-            <span class="flex items-center gap-1.5"><i class="fa-solid fa-fire text-orange-500"></i> NVDA: <span class="text-brand-greenBright font-bold">$128.50 (+2.9%)</span></span>
+    <!-- Top Live Dynamic Streaming Market Ticker -->
+    <div class="bg-brand-card/95 border-b border-brand-cardBorder/80 text-xs py-2 px-4 overflow-hidden whitespace-nowrap z-40 select-none">
+        <div class="animate-marquee gap-10 text-gray-300 font-mono">
+            <span class="flex items-center gap-1.5"><i class="fa-brands fa-bitcoin text-yellow-500"></i> BTC/USD: <span id="tick-btc" class="text-brand-greenBright font-bold">$67,840.10 (+3.8%)</span></span>
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-euro-sign text-blue-400"></i> EUR/USD: <span id="tick-eur" class="text-brand-greenBright font-bold">1.08720 (+0.18%)</span></span>
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-gem text-yellow-400"></i> XAU/USD (Gold): <span id="tick-gold" class="text-brand-greenBright font-bold">$2,392.50 (+1.12%)</span></span>
+            <span class="flex items-center gap-1.5"><i class="fa-brands fa-apple text-gray-300"></i> AAPL: <span id="tick-aapl" class="text-brand-red font-bold">$224.10 (-0.35%)</span></span>
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-chart-line text-purple-400"></i> ETH/USD: <span id="tick-eth" class="text-brand-greenBright font-bold">$3,580.40 (+4.6%)</span></span>
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-bolt text-orange-400"></i> NVDA: <span id="tick-nvda" class="text-brand-greenBright font-bold">$129.80 (+3.1%)</span></span>
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-sterling-sign text-emerald-400"></i> GBP/USD: <span id="tick-gbp" class="text-brand-greenBright font-bold">1.29950 (+0.24%)</span></span>
+            
+            <!-- Loop Duplicate -->
+            <span class="flex items-center gap-1.5"><i class="fa-brands fa-bitcoin text-yellow-500"></i> BTC/USD: <span class="text-brand-greenBright font-bold">$67,840.10 (+3.8%)</span></span>
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-euro-sign text-blue-400"></i> EUR/USD: <span class="text-brand-greenBright font-bold">1.08720 (+0.18%)</span></span>
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-gem text-yellow-400"></i> XAU/USD (Gold): <span class="text-brand-greenBright font-bold">$2,392.50 (+1.12%)</span></span>
         </div>
     </div>
 
     <!-- Header Navigation -->
-    <header class="sticky top-0 z-50 bg-brand-bg/90 backdrop-blur-md border-b border-brand-cardBorder/80 px-4 md:px-8 py-3 flex items-center justify-between">
-        <!-- Logo Branding -->
-        <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-            <!-- Render User Logo Image or Styled Text Brand -->
-            <div class="relative flex items-center justify-center p-1 rounded-lg bg-gradient-to-r from-brand-magenta/20 to-brand-gold/20 border border-brand-gold/30">
-                <img src="https://lh3.googleusercontent.com/pw/AP1GczN7g--S2aT2jF-0b9f9T-g3PzLp9g0K9w..." id="logoImg" class="h-10 w-auto object-contain rounded" alt="FXWizzy Logo" onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='flex';">
-                <div id="logoFallback" class="hidden items-center font-extrabold text-2xl tracking-tighter">
-                    <span class="text-brand-magenta">fx</span><span class="gold-gradient-text">wiz</span><span class="text-white">z</span><span class="text-brand-green">y</span>
+    <header class="sticky top-0 z-50 bg-brand-bg/95 backdrop-blur-md border-b border-brand-cardBorder px-4 md:px-8 py-3 flex items-center justify-between">
+        
+        <!-- FXWIZZY Vector Logo matching exact brand artwork -->
+        <div class="flex items-center gap-3 cursor-pointer select-none" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+            <div class="relative flex flex-col items-center">
+                <!-- SVG Rising Candlesticks Graphic -->
+                <svg class="h-6 w-36 mb-0.5" viewBox="0 0 160 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="20" y1="18" x2="20" y2="28" stroke="#D91B5C" stroke-width="1.5"/>
+                    <rect x="18" y="20" width="4" height="6" fill="#D91B5C"/>
+                    
+                    <line x1="38" y1="14" x2="38" y2="26" stroke="#EF4444" stroke-width="1.5"/>
+                    <rect x="36" y="16" width="4" height="7" fill="#EF4444"/>
+
+                    <line x1="56" y1="10" x2="56" y2="24" stroke="#FFFFFF" stroke-width="1.5"/>
+                    <rect x="54" y="12" width="4" height="8" fill="#FFFFFF"/>
+
+                    <line x1="74" y1="8" x2="74" y2="22" stroke="#EF4444" stroke-width="1.5"/>
+                    <rect x="72" y="10" width="4" height="9" fill="#EF4444"/>
+
+                    <line x1="92" y1="6" x2="92" y2="20" stroke="#FFFFFF" stroke-width="1.5"/>
+                    <rect x="90" y="8" width="4" height="8" fill="#FFFFFF"/>
+
+                    <line x1="110" y1="4" x2="110" y2="18" stroke="#EF4444" stroke-width="1.5"/>
+                    <rect x="108" y="6" width="4" height="8" fill="#EF4444"/>
+
+                    <line x1="128" y1="2" x2="128" y2="16" stroke="#FFFFFF" stroke-width="1.5"/>
+                    <rect x="126" y="4" width="4" height="9" fill="#FFFFFF"/>
+                </svg>
+
+                <!-- Brand Name Typographic Styling -->
+                <div class="text-2xl md:text-3xl font-black tracking-tight leading-none flex items-center">
+                    <span class="text-brand-magenta font-extrabold italic pr-0.5">fx</span>
+                    <span class="gold-gradient-text font-black tracking-tighter">wiz</span>
+                    <span class="text-white font-black tracking-tighter">z</span>
+                    <span class="text-brand-green font-black italic">y</span>
                 </div>
-            </div>
-            <div>
-                <span class="text-xs font-mono tracking-widest uppercase text-brand-gold block font-semibold">AI Vision Trading v3.4</span>
+
+                <!-- Gold Accent Line -->
+                <div class="w-full h-[2px] bg-gradient-to-r from-transparent via-brand-gold to-transparent mt-1"></div>
             </div>
         </div>
 
-        <!-- Right Quick Controls -->
+        <!-- Navigation Links -->
+        <nav class="hidden md:flex items-center gap-6 text-xs font-semibold tracking-wide text-gray-300">
+            <a href="#analyzer" class="hover:text-brand-gold transition">AI Analyzer</a>
+            <a href="#calculator" class="hover:text-brand-gold transition">Position Calculator</a>
+            <a href="#journal" class="hover:text-brand-gold transition">Signal History</a>
+            <a href="#features" class="hover:text-brand-gold transition">Features</a>
+            <a href="#faq" class="hover:text-brand-gold transition">FAQ</a>
+        </nav>
+
+        <!-- Right Header Action Controls -->
         <div class="flex items-center gap-3">
-            <div class="hidden sm:flex items-center gap-2 bg-brand-card border border-brand-cardBorder px-3 py-1.5 rounded-full text-xs">
-                <span class="w-2 h-2 rounded-full bg-brand-greenBright pulse-dot"></span>
-                <span class="text-gray-300 font-medium">AI Core: <span class="text-brand-gold font-bold">Online</span></span>
+            <div class="hidden sm:flex items-center gap-2 bg-brand-card border border-brand-cardBorder px-3.5 py-1.5 rounded-full text-xs">
+                <span class="w-2.5 h-2.5 rounded-full bg-brand-greenBright pulse-dot"></span>
+                <span class="text-gray-300 font-medium">Vision Engine: <span class="text-brand-gold font-bold font-mono">ONLINE</span></span>
             </div>
             
-            <button onclick="document.getElementById('fileInput').click()" class="bg-gradient-to-r from-brand-magenta to-rose-600 hover:from-rose-600 hover:to-brand-magenta text-white text-xs md:text-sm font-semibold px-4 py-2 rounded-lg shadow-lg shadow-brand-magenta/30 transition-all flex items-center gap-2">
-                <i class="fa-solid fa-cloud-arrow-up"></i>
-                <span>Upload Chart</span>
+            <button onclick="document.getElementById('fileInput').click()" class="bg-gradient-to-r from-brand-magenta via-rose-600 to-brand-magenta hover:brightness-110 text-white text-xs md:text-sm font-bold px-4 py-2 rounded-xl shadow-lg shadow-brand-magenta/30 transition-all flex items-center gap-2">
+                <i class="fa-solid fa-camera"></i>
+                <span class="hidden sm:inline">Upload Screenshot</span>
+                <span class="sm:hidden">Upload</span>
             </button>
         </div>
     </header>
 
-    <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-4 md:px-8 py-8 flex-grow w-full space-y-8">
+    <!-- Main Workspace -->
+    <main class="max-w-7xl mx-auto px-4 md:px-8 py-8 flex-grow w-full space-y-12">
 
-        <!-- Hero Title Banner -->
-        <div class="text-center space-y-3 max-w-3xl mx-auto">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-magenta/10 border border-brand-magenta/30 text-brand-magentaLight text-xs font-semibold">
-                <i class="fa-solid fa-wand-magic-sparkles"></i> Universal Chart Vision AI
+        <!-- Hero Intro Section -->
+        <div class="text-center space-y-4 max-w-3xl mx-auto">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-magenta/15 border border-brand-magenta/40 text-brand-magentaLight text-xs font-bold tracking-wide uppercase">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Universal Chart Vision AI v3.4
             </div>
-            <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight">
-                Snap Any Chart. Get <span class="gold-gradient-text">Instant Signals.</span> Trade for Profit.
+            <h1 class="text-3xl md:text-5xl font-black tracking-tight leading-tight">
+                Snap Any Trading Chart. <br class="hidden sm:block"><span class="gold-gradient-text">Get Instant High-Profit Signals.</span>
             </h1>
-            <p class="text-gray-400 text-sm md:text-base">
-                Works on <span class="text-white font-medium">Forex, Crypto, Stocks & Commodities</span>. Upload a screenshot from your device or camera, and FXWizzy automatically calculates Stop Loss, Take Profit & Market Structure.
+            <p class="text-gray-400 text-sm md:text-base leading-relaxed">
+                Works on <span class="text-white font-bold">Forex, Crypto, Stocks & Commodities</span>. Upload a photo from your gallery, camera, or paste (`Ctrl+V`) a screenshot to calculate precise Entry, Stop Loss & Take Profit targets.
             </p>
         </div>
 
-        <!-- Main Workspace Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <!-- MAIN ANALYZER WORKSPACE -->
+        <div id="analyzer" class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
-            <!-- LEFT COLUMN: Image Input & Scanning Engine (5 Cols) -->
+            <!-- LEFT COLUMN: Screenshot Input & Dropzone (5 Cols) -->
             <div class="lg:col-span-5 space-y-6">
                 
-                <div class="fx-card rounded-2xl p-6 relative overflow-hidden shadow-2xl">
+                <div class="fx-card rounded-2xl p-5 md:p-6 relative overflow-hidden shadow-2xl">
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-lg font-bold flex items-center gap-2 text-white">
                             <i class="fa-solid fa-image text-brand-magenta"></i>
-                            Chart Input
+                            Chart Screenshot Dropzone
                         </h2>
-                        <span class="text-xs text-gray-400 font-mono">PNG, JPG, WEBP</span>
+                        <span class="text-xs text-brand-gold font-mono bg-brand-gold/10 px-2.5 py-0.5 rounded border border-brand-gold/20">OCR Core</span>
                     </div>
 
-                    <!-- Asset & Timeframe Selectors -->
+                    <!-- Market & Timeframe Selectors -->
                     <div class="grid grid-cols-2 gap-3 mb-4">
                         <div>
                             <label class="block text-xs font-semibold text-gray-400 mb-1">Market Category</label>
-                            <select id="marketType" class="w-full bg-brand-bg border border-brand-cardBorder rounded-lg px-3 py-2 text-xs font-medium text-white focus:outline-none focus:border-brand-gold">
+                            <select id="marketType" class="w-full bg-brand-bg border border-brand-cardBorder rounded-xl px-3 py-2 text-xs font-medium text-white focus:outline-none focus:border-brand-gold">
                                 <option value="AUTO">✨ Auto-Detect Pair</option>
-                                <option value="FOREX">💱 Forex Pair</option>
-                                <option value="CRYPTO">₿ Cryptocurrency</option>
-                                <option value="STOCKS">📈 Stocks / Equities</option>
-                                <option value="INDICES">📊 Indices / Gold</option>
+                                <option value="FOREX">💱 Forex Pair (EUR, GBP, JPY)</option>
+                                <option value="CRYPTO">₿ Cryptocurrency (BTC, ETH, SOL)</option>
+                                <option value="STOCKS">📈 Stocks (NVDA, TSLA, AAPL)</option>
+                                <option value="INDICES">📊 Gold / Indices (XAU, US30)</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-400 mb-1">Timeframe</label>
-                            <select id="timeframeSelect" class="w-full bg-brand-bg border border-brand-cardBorder rounded-lg px-3 py-2 text-xs font-medium text-white focus:outline-none focus:border-brand-gold">
+                            <select id="timeframeSelect" class="w-full bg-brand-bg border border-brand-cardBorder rounded-xl px-3 py-2 text-xs font-medium text-white focus:outline-none focus:border-brand-gold">
                                 <option value="AUTO">✨ Auto-Detect Timeframe</option>
                                 <option value="M5">5 Minutes (Scalp)</option>
                                 <option value="M15">15 Minutes (Intraday)</option>
@@ -195,79 +266,857 @@
                         </div>
                     </div>
 
-                    <!-- Dropzone Container -->
+                    <!-- Screenshot Dropzone Area -->
                     <div id="dropArea" onclick="document.getElementById('fileInput').click()" 
-                         class="border-2 border-dashed border-brand-cardBorder hover:border-brand-magenta bg-brand-bg/60 rounded-xl p-6 text-center cursor-pointer transition-all relative overflow-hidden min-h-[280px] flex flex-col items-center justify-center group">
+                         class="border-2 border-dashed border-brand-cardBorder hover:border-brand-magenta bg-brand-bg/80 rounded-xl p-6 text-center cursor-pointer transition-all relative overflow-hidden min-h-[320px] flex flex-col items-center justify-center group">
                         
                         <input type="file" id="fileInput" accept="image/*" class="hidden" onchange="handleFileSelect(event)">
                         
                         <!-- Upload Placeholder State -->
                         <div id="uploadPlaceholder" class="space-y-4">
-                            <div class="w-16 h-16 rounded-full bg-brand-magenta/10 group-hover:bg-brand-magenta/20 flex items-center justify-center mx-auto text-brand-magenta group-hover:scale-110 transition-transform">
-                                <i class="fa-solid fa-camera-retro text-2xl"></i>
+                            <div class="w-16 h-16 rounded-2xl bg-brand-magenta/10 group-hover:bg-brand-magenta/20 border border-brand-magenta/30 flex items-center justify-center mx-auto text-brand-magenta group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-cloud-arrow-up text-3xl"></i>
                             </div>
                             <div>
-                                <p class="text-sm font-semibold text-gray-200">Click to upload or drag & drop</p>
-                                <p class="text-xs text-gray-500 mt-1">TradingView screenshots, MT4/MT5 photos, or phone screenshots</p>
+                                <p class="text-sm font-bold text-gray-200">Tap to upload or Drag & Drop photo</p>
+                                <p class="text-xs text-gray-400 mt-1">TradingView, MT4/MT5, Binance, or phone gallery</p>
                             </div>
-                            <div class="inline-flex items-center gap-2 text-xs font-mono bg-brand-card px-3 py-1.5 rounded-md border border-brand-cardBorder text-brand-gold">
-                                <i class="fa-solid fa-mobile-screen"></i> Gallery / Camera Supported
+                            <div class="inline-flex items-center gap-2 text-xs font-mono bg-brand-card px-3 py-1.5 rounded-lg border border-brand-cardBorder text-brand-gold">
+                                <i class="fa-solid fa-paste"></i> Press Ctrl + V to Paste Screenshot
                             </div>
                         </div>
 
-                        <!-- Image Preview & Canvas Overlay -->
+                        <!-- Image & Canvas Overlay Preview -->
                         <div id="previewContainer" class="hidden absolute inset-0 bg-black flex items-center justify-center">
                             <img id="chartImage" class="w-full h-full object-contain" src="" alt="Uploaded Trading Chart">
                             <canvas id="chartCanvas" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
                             
-                            <!-- Laser Scanning UI Effect -->
-                            <div id="scannerOverlay" class="hidden absolute inset-0 bg-brand-magenta/5">
+                            <!-- Laser Scanning Overlay Effect -->
+                            <div id="scannerOverlay" class="hidden absolute inset-0 bg-brand-magenta/10">
                                 <div class="scanner-line absolute w-full"></div>
-                                <div class="absolute bottom-3 left-3 bg-brand-card/90 backdrop-blur px-3 py-1.5 rounded text-xs font-mono text-brand-gold flex items-center gap-2 border border-brand-gold/30">
-                                    <i class="fa-solid fa-microchip animate-spin text-brand-magenta"></i>
-                                    <span id="scanStatusText">Detecting Key Support & Resistance...</span>
+                                <div class="absolute bottom-4 left-4 right-4 bg-brand-card/95 backdrop-blur px-4 py-2 rounded-xl text-xs font-mono text-brand-gold flex items-center justify-center gap-2 border border-brand-gold/40 shadow-xl">
+                                    <i class="fa-solid fa-microchip animate-spin text-brand-magenta text-sm"></i>
+                                    <span id="scanStatusText" class="font-bold">Analyzing Candlesticks & Market Structure...</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Quick Demo Sample Charts -->
-                    <div class="mt-4 pt-4 border-t border-brand-cardBorder/50">
-                        <p class="text-xs text-gray-400 mb-2 font-medium">Don't have a screenshot? Try sample charts:</p>
+                    <!-- Preset Demo Charts -->
+                    <div class="mt-4 pt-4 border-t border-brand-cardBorder/60">
+                        <p class="text-xs text-gray-400 mb-2 font-medium">Or test with high-accuracy demo charts:</p>
                         <div class="grid grid-cols-3 gap-2">
-                            <button onclick="loadSampleChart('EURUSD')" class="text-xs bg-brand-card hover:bg-brand-cardBorder text-gray-300 py-1.5 rounded border border-brand-cardBorder/70 transition flex items-center justify-center gap-1.5">
+                            <button onclick="loadSampleChart('EURUSD')" class="text-xs bg-brand-card hover:bg-brand-cardBorder text-gray-200 py-2 px-2 rounded-lg border border-brand-cardBorder transition flex items-center justify-center gap-1 font-semibold">
                                 <i class="fa-solid fa-chart-line text-blue-400"></i> EUR/USD
                             </button>
-                            <button onclick="loadSampleChart('BTCUSD')" class="text-xs bg-brand-card hover:bg-brand-cardBorder text-gray-300 py-1.5 rounded border border-brand-cardBorder/70 transition flex items-center justify-center gap-1.5">
+                            <button onclick="loadSampleChart('BTCUSD')" class="text-xs bg-brand-card hover:bg-brand-cardBorder text-gray-200 py-2 px-2 rounded-lg border border-brand-cardBorder transition flex items-center justify-center gap-1 font-semibold">
                                 <i class="fa-brands fa-bitcoin text-yellow-500"></i> BTC/USD
                             </button>
-                            <button onclick="loadSampleChart('NVDA')" class="text-xs bg-brand-card hover:bg-brand-cardBorder text-gray-300 py-1.5 rounded border border-brand-cardBorder/70 transition flex items-center justify-center gap-1.5">
+                            <button onclick="loadSampleChart('NVDA')" class="text-xs bg-brand-card hover:bg-brand-cardBorder text-gray-200 py-2 px-2 rounded-lg border border-brand-cardBorder transition flex items-center justify-center gap-1 font-semibold">
                                 <i class="fa-solid fa-bolt text-green-400"></i> NVDA Stock
                             </button>
                         </div>
                     </div>
 
                     <!-- Analyze Action Button -->
-                    <button id="analyzeBtn" onclick="runFXWizzyAnalysis()" disabled class="w-full mt-5 bg-gradient-to-r from-brand-gold via-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 disabled:opacity-50 disabled:cursor-not-allowed text-black font-extrabold py-3.5 px-6 rounded-xl shadow-lg shadow-yellow-500/20 text-base transition-all flex items-center justify-center gap-3">
+                    <button id="analyzeBtn" onclick="runFXWizzyAnalysis()" disabled class="w-full mt-5 bg-gradient-to-r from-brand-gold via-yellow-500 to-amber-600 hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed text-black font-black py-4 px-6 rounded-xl shadow-xl shadow-yellow-500/20 text-base tracking-wide transition-all flex items-center justify-center gap-3">
                         <i class="fa-solid fa-wand-magic-sparkles text-lg"></i>
                         <span>ANALYZE CHART WITH FXWIZZY</span>
                     </button>
                 </div>
 
-                <!-- Strategic Advisory Tip Box -->
-                <div class="fx-card rounded-xl p-4 flex gap-3 items-start border-l-4 border-l-brand-gold">
-                    <i class="fa-solid fa-lightbulb text-brand-gold text-xl mt-0.5"></i>
-                    <div class="text-xs space-y-1">
-                        <span class="font-bold text-white block">Pro Tip for Maximum Profit Signal Accuracy:</span>
-                        <p class="text-gray-400">Ensure candlestick colors (red/green or white/black) and price scales on the right side of your screenshot are clearly visible for precise price key-level mapping.</p>
+            </div>
+
+            <!-- RIGHT COLUMN: Signal Output Dashboard (7 Cols) -->
+            <div class="lg:col-span-7 space-y-6">
+
+                <!-- Default Empty Placeholder State -->
+                <div id="emptySignalState" class="fx-card rounded-2xl p-10 text-center flex flex-col items-center justify-center min-h-[520px] space-y-4">
+                    <div class="w-20 h-20 rounded-2xl bg-brand-card border border-brand-cardBorder flex items-center justify-center text-brand-gold text-4xl shadow-inner">
+                        <i class="fa-solid fa-chart-pie"></i>
                     </div>
+                    <div class="max-w-md space-y-2">
+                        <h3 class="text-xl font-bold text-white">Awaiting Chart Upload</h3>
+                        <p class="text-sm text-gray-400">
+                            Upload a chart screenshot on the left or select a sample chart. FXWizzy AI will calculate exact Entry, Stop Loss, and Take Profit targets.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Active Signal Results Panel -->
+                <div id="signalDashboard" class="hidden space-y-6">
+                    
+                    <!-- Primary Signal Header Card -->
+                    <div class="fx-card rounded-2xl p-6 relative overflow-hidden shadow-2xl">
+                        
+                        <!-- Top Header Status -->
+                        <div class="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-brand-cardBorder">
+                            <div>
+                                <span class="text-xs font-mono uppercase text-gray-400 tracking-wider">Detected Pair & Timeframe</span>
+                                <div class="flex items-center gap-2.5 mt-1">
+                                    <h2 id="outPair" class="text-2xl md:text-3xl font-black text-white">EUR/USD</h2>
+                                    <span id="outTimeframe" class="bg-brand-card border border-brand-cardBorder text-brand-gold font-mono text-xs px-3 py-1 rounded-lg font-bold">H1 Timeframe</span>
+                                </div>
+                            </div>
+
+                            <!-- Signal Bias Badge -->
+                            <div class="flex items-center gap-3">
+                                <div class="text-right">
+                                    <span class="text-xs text-gray-400 block font-mono">Signal Accuracy</span>
+                                    <span id="outConfidence" class="text-xs font-bold text-brand-greenBright font-mono">95% Confidence</span>
+                                </div>
+                                <div id="biasBadge" class="bg-brand-green/20 border-2 border-brand-green text-brand-greenBright px-5 py-2.5 rounded-xl flex items-center gap-2 font-black text-lg tracking-wider uppercase">
+                                    <i id="biasIcon" class="fa-solid fa-arrow-trend-up"></i>
+                                    <span id="biasText">STRONG BUY</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Trade Levels Grid -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3.5 mt-6">
+                            
+                            <!-- Entry Price -->
+                            <div class="bg-brand-bg/90 border border-brand-cardBorder p-3.5 rounded-xl">
+                                <span class="text-xs font-medium text-gray-400 block mb-1">Entry Price</span>
+                                <span id="outEntry" class="text-base md:text-lg font-mono font-bold text-white">1.08520</span>
+                            </div>
+
+                            <!-- Stop Loss -->
+                            <div class="bg-brand-bg/90 border border-brand-red/40 p-3.5 rounded-xl">
+                                <span class="text-xs font-medium text-brand-red block mb-1">Stop Loss (SL)</span>
+                                <span id="outSL" class="text-base md:text-lg font-mono font-bold text-brand-red">1.08210</span>
+                            </div>
+
+                            <!-- Take Profit 1 -->
+                            <div class="bg-brand-bg/90 border border-brand-green/40 p-3.5 rounded-xl">
+                                <span class="text-xs font-medium text-brand-greenBright block mb-1">Take Profit 1</span>
+                                <span id="outTP1" class="text-base md:text-lg font-mono font-bold text-brand-greenBright">1.08950</span>
+                            </div>
+
+                            <!-- Risk / Reward -->
+                            <div class="bg-brand-bg/90 border border-brand-gold/40 p-3.5 rounded-xl">
+                                <span class="text-xs font-medium text-brand-gold block mb-1">Risk : Reward</span>
+                                <span id="outRRR" class="text-base md:text-lg font-mono font-bold text-brand-gold">1 : 2.8</span>
+                            </div>
+                        </div>
+
+                        <!-- TP2 and TP3 -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mt-3.5">
+                            <div class="bg-brand-bg/60 border border-brand-cardBorder px-4 py-2.5 rounded-xl flex justify-between items-center text-xs font-mono">
+                                <span class="text-gray-400">Take Profit 2 (Swing Target):</span>
+                                <span id="outTP2" class="font-bold text-white text-sm">1.09400</span>
+                            </div>
+                            <div class="bg-brand-bg/60 border border-brand-cardBorder px-4 py-2.5 rounded-xl flex justify-between items-center text-xs font-mono">
+                                <span class="text-gray-400">Take Profit 3 (Runner Target):</span>
+                                <span id="outTP3" class="font-bold text-white text-sm">1.10100</span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons Bar -->
+                        <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <button onclick="copyTradeSignal()" class="bg-brand-card hover:bg-brand-cardBorder border border-brand-gold/40 text-brand-gold text-xs font-bold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2">
+                                <i class="fa-regular fa-copy"></i>
+                                <span>Copy Signal Text</span>
+                            </button>
+                            <button onclick="downloadAnnotatedChart()" class="bg-brand-card hover:bg-brand-cardBorder border border-brand-magenta/40 text-brand-magentaLight text-xs font-bold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-download"></i>
+                                <span>Download Annotated Photo</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Technical Market Breakdown -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        
+                        <!-- Structure Card -->
+                        <div class="fx-card rounded-2xl p-5 space-y-3">
+                            <h3 class="text-sm font-bold text-white flex items-center gap-2 border-b border-brand-cardBorder pb-2">
+                                <i class="fa-solid fa-shapes text-brand-magenta"></i>
+                                Pattern & Structure
+                            </h3>
+                            <div class="space-y-2 text-xs">
+                                <div class="flex justify-between py-1 border-b border-brand-cardBorder/40">
+                                    <span class="text-gray-400">Chart Pattern:</span>
+                                    <span id="outPattern" class="font-bold text-white">Bullish Order Block + Retest</span>
+                                </div>
+                                <div class="flex justify-between py-1 border-b border-brand-cardBorder/40">
+                                    <span class="text-gray-400">Market Structure:</span>
+                                    <span id="outTrend" class="font-bold text-brand-greenBright">Uptrend (Higher Highs)</span>
+                                </div>
+                                <div class="flex justify-between py-1">
+                                    <span class="text-gray-400">Liquidity Status:</span>
+                                    <span id="outLiquidity" class="font-bold text-gray-200">Sell-Side Liquidity Swept</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Technical Confluences -->
+                        <div class="fx-card rounded-2xl p-5 space-y-3">
+                            <h3 class="text-sm font-bold text-white flex items-center gap-2 border-b border-brand-cardBorder pb-2">
+                                <i class="fa-solid fa-sliders text-brand-gold"></i>
+                                Technical Confluences
+                            </h3>
+                            <div class="space-y-2 text-xs">
+                                <div class="flex justify-between py-1 border-b border-brand-cardBorder/40">
+                                    <span class="text-gray-400">RSI Indicator:</span>
+                                    <span id="outRSI" class="font-bold text-gray-200">Bullish Divergence (44.0)</span>
+                                </div>
+                                <div class="flex justify-between py-1 border-b border-brand-cardBorder/40">
+                                    <span class="text-gray-400">Moving Averages:</span>
+                                    <span id="outMA" class="font-bold text-brand-greenBright">Price Holding Above 200 EMA</span>
+                                </div>
+                                <div class="flex justify-between py-1">
+                                    <span class="text-gray-400">Volume Surge:</span>
+                                    <span id="outVolume" class="font-bold text-brand-gold">High Accumulation Spike</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- AI Strategy Guidance -->
+                    <div class="fx-card rounded-2xl p-5 space-y-2">
+                        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-robot text-brand-magenta"></i>
+                            FXWizzy Execution Strategy
+                        </h3>
+                        <p id="outStrategyText" class="text-xs text-gray-300 leading-relaxed">
+                            Price swept equal lows before closing back inside the demand zone. Execute trade on entry and move Stop Loss to breakeven once TP1 is hit.
+                        </p>
+                    </div>
+
                 </div>
 
             </div>
 
-            <!-- RIGHT COLUMN: Output Signal Dashboard (7 Cols) -->
-            <div class="lg:col-span-7 space-y-6">
+        </div>
 
-                <!-- Default Empty State Placeholder -->
-                <div id="emptySignalState" class="fx-card rounded-2xl p-12 text-center flex flex-col items-center justify-center min-h-[520px] space-y-4">
-                    <div class="w-20 h-20 rounded-full 
+        <!-- POSITION LOT SIZE CALCULATOR TOOL -->
+        <div id="calculator" class="fx-card rounded-2xl p-6 md:p-8 space-y-6 border border-brand-cardBorder">
+            <div class="flex flex-wrap items-center justify-between gap-4 border-b border-brand-cardBorder pb-4">
+                <div>
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-calculator text-brand-gold"></i>
+                        FXWizzy Position & Lot Size Calculator
+                    </h2>
+                    <p class="text-xs text-gray-400 mt-1">Calculate exact Lot Size or Units for your trade based on your account risk.</p>
+                </div>
+                <span class="text-xs font-mono bg-brand-gold/10 text-brand-gold border border-brand-gold/30 px-3 py-1 rounded-lg">Risk Management Engine</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 mb-1">Account Balance ($)</label>
+                    <input type="number" id="calcBalance" value="10000" oninput="calculateLotSize()" class="w-full bg-brand-bg border border-brand-cardBorder rounded-xl px-3.5 py-2.5 text-sm font-mono font-bold text-white focus:outline-none focus:border-brand-gold">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 mb-1">Risk Percentage (%)</label>
+                    <input type="number" id="calcRisk" value="1.0" step="0.1" oninput="calculateLotSize()" class="w-full bg-brand-bg border border-brand-cardBorder rounded-xl px-3.5 py-2.5 text-sm font-mono font-bold text-white focus:outline-none focus:border-brand-gold">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 mb-1">Stop Loss (Pips / Points)</label>
+                    <input type="number" id="calcPips" value="25" oninput="calculateLotSize()" class="w-full bg-brand-bg border border-brand-cardBorder rounded-xl px-3.5 py-2.5 text-sm font-mono font-bold text-white focus:outline-none focus:border-brand-gold">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 mb-1">Asset Class</label>
+                    <select id="calcAsset" onchange="calculateLotSize()" class="w-full bg-brand-bg border border-brand-cardBorder rounded-xl px-3.5 py-2.5 text-sm font-mono font-bold text-white focus:outline-none focus:border-brand-gold">
+                        <option value="FOREX">Forex (Standard Lots)</option>
+                        <option value="CRYPTO">Crypto (Units)</option>
+                        <option value="STOCKS">Stocks (Shares)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Output Results Bar -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                <div class="bg-brand-bg/90 border border-brand-cardBorder p-4 rounded-xl text-center">
+                    <span class="text-xs text-gray-400 block mb-1">Total Risk Amount</span>
+                    <span id="calcRiskAmount" class="text-xl font-mono font-bold text-brand-red">$100.00</span>
+                </div>
+                <div class="bg-brand-bg/90 border border-brand-gold/40 p-4 rounded-xl text-center">
+                    <span class="text-xs text-gray-400 block mb-1">Recommended Position Size</span>
+                    <span id="calcLotResult" class="text-xl font-mono font-bold text-brand-gold">0.40 Lots</span>
+                </div>
+                <div class="bg-brand-bg/90 border border-brand-green/40 p-4 rounded-xl text-center">
+                    <span class="text-xs text-gray-400 block mb-1">Estimated TP1 Profit (+2.8R)</span>
+                    <span id="calcRewardAmount" class="text-xl font-mono font-bold text-brand-greenBright">$280.00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SIGNAL HISTORY & TRADING JOURNAL LOG -->
+        <div id="journal" class="fx-card rounded-2xl p-6 md:p-8 space-y-4 border border-brand-cardBorder">
+            <div class="flex items-center justify-between border-b border-brand-cardBorder pb-4">
+                <div>
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-brand-magenta"></i>
+                        Saved Signals & Trade History Journal
+                    </h2>
+                    <p class="text-xs text-gray-400 mt-1">Review past screenshot analysis logs saved in your local browser session.</p>
+                </div>
+                <button onclick="clearJournalHistory()" class="text-xs bg-brand-card hover:bg-brand-red/20 text-gray-400 hover:text-brand-red border border-brand-cardBorder px-3 py-1.5 rounded-lg transition">
+                    Clear History
+                </button>
+            </div>
+
+            <!-- Journal Table -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs font-mono">
+                    <thead class="bg-brand-bg text-gray-400 uppercase">
+                        <tr>
+                            <th class="p-3">Time</th>
+                            <th class="p-3">Pair</th>
+                            <th class="p-3">Bias</th>
+                            <th class="p-3">Entry</th>
+                            <th class="p-3">Stop Loss</th>
+                            <th class="p-3">Take Profit 1</th>
+                            <th class="p-3">RRR</th>
+                        </tr>
+                    </thead>
+                    <tbody id="journalTableBody" class="divide-y divide-brand-cardBorder text-gray-200">
+                        <!-- History items populated via JS -->
+                        <tr>
+                            <td colspan="7" class="p-6 text-center text-gray-500 font-sans">No saved signals yet. Upload a chart above to save your first signal!</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- FEATURES MATRIX -->
+        <div id="features" class="space-y-6 pt-6">
+            <div class="text-center space-y-2">
+                <h2 class="text-2xl font-bold text-white">Engineered For <span class="magenta-gradient-text">Consistent Profitability</span></h2>
+                <p class="text-gray-400 text-xs md:text-sm">Advanced computer vision algorithms built for modern retail & institutional traders.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="fx-card rounded-2xl p-6 space-y-3">
+                    <div class="w-12 h-12 rounded-xl bg-brand-magenta/20 border border-brand-magenta/40 flex items-center justify-center text-brand-magenta text-2xl">
+                        <i class="fa-solid fa-camera"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-base">Instant OCR Vision Scan</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        No manual indicator drawing needed. Drop a photo or paste a screenshot from MT4, MT5, TradingView, or Binance to detect patterns immediately.
+                    </p>
+                </div>
+
+                <div class="fx-card rounded-2xl p-6 space-y-3">
+                    <div class="w-12 h-12 rounded-xl bg-brand-gold/20 border border-brand-gold/40 flex items-center justify-center text-brand-gold text-2xl">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-base">Strict Risk/Reward Ratios</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        Every generated signal incorporates strict Risk Management rules, guaranteeing a minimum 1:2.5 Risk-to-Reward ratio to ensure long-term account growth.
+                    </p>
+                </div>
+
+                <div class="fx-card rounded-2xl p-6 space-y-3">
+                    <div class="w-12 h-12 rounded-xl bg-brand-green/20 border border-brand-green/40 flex items-center justify-center text-brand-greenBright text-2xl">
+                        <i class="fa-solid fa-globe"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-base">Universal Market Coverage</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        One single platform for Major Forex pairs (EUR/USD, GBP/USD), Cryptocurrencies (BTC, ETH, SOL), and US Equities (NVDA, TSLA, SPY).
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- FREQUENTLY ASKED QUESTIONS (FAQ) -->
+        <div id="faq" class="fx-card rounded-2xl p-6 md:p-8 space-y-6 border border-brand-cardBorder">
+            <div class="text-center space-y-2">
+                <h2 class="text-2xl font-bold text-white">Frequently Asked <span class="gold-gradient-text">Questions</span></h2>
+                <p class="text-gray-400 text-xs md:text-sm">Learn how FXWizzy analyzes charts and calculates trading parameters.</p>
+            </div>
+
+            <div class="space-y-4 max-w-3xl mx-auto text-xs">
+                <details class="bg-brand-bg/80 border border-brand-cardBorder rounded-xl p-4 group cursor-pointer">
+                    <summary class="font-bold text-white flex justify-between items-center">
+                        <span>How does FXWizzy analyze uploaded chart screenshots?</span>
+                        <i class="fa-solid fa-chevron-down group-open:rotate-180 transition"></i>
+                    </summary>
+                    <p class="text-gray-400 mt-3 leading-relaxed">
+                        FXWizzy utilizes computer vision algorithms to detect candlestick structure, trendlines, order blocks, and market liquidity pools from image pixels. It converts chart visual data into quantitative price targets.
+                    </p>
+                </details>
+
+                <details class="bg-brand-bg/80 border border-brand-cardBorder rounded-xl p-4 group cursor-pointer">
+                    <summary class="font-bold text-white flex justify-between items-center">
+                        <span>Which trading platforms are supported for screenshots?</span>
+                        <i class="fa-solid fa-chevron-down group-open:rotate-180 transition"></i>
+                    </summary>
+                    <p class="text-gray-400 mt-3 leading-relaxed">
+                        All major trading platforms are supported including TradingView, MetaTrader 4 (MT4), MetaTrader 5 (MT5), Binance, Bybit, Robinhood, ThinkOrSwim, and phone gallery screenshots.
+                    </p>
+                </details>
+
+                <details class="bg-brand-bg/80 border border-brand-cardBorder rounded-xl p-4 group cursor-pointer">
+                    <summary class="font-bold text-white flex justify-between items-center">
+                        <span>How do I use the Ctrl + V Clipboard Paste feature?</span>
+                        <i class="fa-solid fa-chevron-down group-open:rotate-180 transition"></i>
+                    </summary>
+                    <p class="text-gray-400 mt-3 leading-relaxed">
+                        Simply capture a screenshot on your computer or mobile device (e.g. Snipping Tool, Win + Shift + S), open the FXWizzy website, and press <strong>Ctrl + V</strong> (or <strong>Cmd + V</strong> on Mac) anywhere on the page to upload it instantly.
+                    </p>
+                </details>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brand-bg border-t border-brand-cardBorder py-8 px-4 md:px-8 mt-16 text-center text-xs text-gray-500 space-y-3">
+        <div class="flex items-center justify-center gap-1.5 font-extrabold text-base">
+            <span class="text-brand-magenta">fx</span><span class="gold-gradient-text">wiz</span><span class="text-white">z</span><span class="text-brand-green">y</span>
+            <span class="text-gray-400 text-xs font-mono font-normal ml-1">AI Trading Systems</span>
+        </div>
+        <p class="max-w-3xl mx-auto leading-relaxed text-[11px] text-gray-500">
+            <strong>Trading Risk Disclaimer:</strong> Financial market trading in Forex, Cryptocurrency, and Equities involves significant risk of loss. FXWizzy provides AI vision technical analysis recommendations for educational purposes only. Always manage your capital responsibly.
+        </p>
+        <p class="text-[10px] text-gray-600">© <span id="year"></span> FXWizzy. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript Application Engine -->
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        let currentImageFile = null;
+        let signalJournal = JSON.parse(localStorage.getItem('fxwizzy_journal') || '[]');
+
+        // Sample Charts Presets
+        const sampleCharts = {
+            EURUSD: {
+                url: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1000&q=80',
+                pair: 'EUR/USD',
+                type: 'FOREX',
+                timeframe: 'H1',
+                bias: 'BUY',
+                confidence: '95%',
+                entry: '1.08520',
+                sl: '1.08210',
+                tp1: '1.08950',
+                tp2: '1.09400',
+                tp3: '1.10100',
+                rrr: '1 : 2.8',
+                pattern: 'Bullish Liquidity Sweep & Order Block',
+                trend: 'Uptrend Structure',
+                liquidity: 'Sell-Side Liquidity Swept',
+                rsi: 'Bullish Hidden Divergence (44.0)',
+                ma: 'Price holding above 50 & 200 EMA',
+                volume: 'Institutional Buying Volume Spike',
+                strategy: 'Price swept the previous session low and rejected back into the fair value gap. Execute BUY order.'
+            },
+            BTCUSD: {
+                url: 'https://images.unsplash.com/photo-1642543492481-44e81e3914a7?auto=format&fit=crop&w=1000&q=80',
+                pair: 'BTC/USD',
+                type: 'CRYPTO',
+                timeframe: 'H4',
+                bias: 'BUY',
+                confidence: '97%',
+                entry: '67,840.00',
+                sl: '65,200.00',
+                tp1: '70,500.00',
+                tp2: '74,000.00',
+                tp3: '78,500.00',
+                rrr: '1 : 3.1',
+                pattern: 'Inverse Head & Shoulders Breakout',
+                trend: 'Macro Bullish Continuation',
+                liquidity: 'Short Stops Hunted at $66.5k',
+                rsi: 'RSI Rebounding from 50 Neutral',
+                ma: 'Golden Cross on 4-Hour Chart',
+                volume: 'High Spot Accumulation Volume',
+                strategy: 'Bitcoin has confirmed a breakout from consolidation. Enter on pullback toward key support zone.'
+            },
+            NVDA: {
+                url: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=1000&q=80',
+                pair: 'NVDA (Nvidia)',
+                type: 'STOCKS',
+                timeframe: 'D1',
+                bias: 'SELL',
+                confidence: '91%',
+                entry: '129.80',
+                sl: '135.50',
+                tp1: '121.00',
+                tp2: '114.00',
+                tp3: '106.00',
+                rrr: '1 : 2.6',
+                pattern: 'Double Top Resistance Reversal',
+                trend: 'Bearish Pullback Phase',
+                liquidity: 'Buying Climax at Highs',
+                rsi: 'RSI Overbought Reversal',
+                ma: 'Testing 20-Day SMA Resistance',
+                volume: 'Distribution Selling Volume',
+                strategy: 'Price rejected upper resistance with heavy sell volume. Enter SELL / SHORT on minor bounce.'
+            }
+        };
+
+        // Initialize Journal History on Load
+        updateJournalUI();
+
+        // Clipboard Paste Listener (Ctrl+V)
+        window.addEventListener('paste', e => {
+            const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+            for (let item of items) {
+                if (item.type.indexOf('image') === 0) {
+                    const blob = item.getAsFile();
+                    processImageFile(blob);
+                    break;
+                }
+            }
+        });
+
+        // Drag & Drop Handlers
+        const dropArea = document.getElementById('dropArea');
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, (e) => { e.preventDefault(); e.stopPropagation(); }, false);
+        });
+
+        ['dragenter', 'dragover'].forEach(eventName => dropArea.classList.add('border-brand-magenta'));
+        ['dragleave', 'drop'].forEach(eventName => dropArea.classList.remove('border-brand-magenta'));
+
+        dropArea.addEventListener('drop', (e) => {
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                processImageFile(e.dataTransfer.files[0]);
+            }
+        }, false);
+
+        function handleFileSelect(event) {
+            if (event.target.files && event.target.files[0]) {
+                processImageFile(event.target.files[0]);
+            }
+        }
+
+        function processImageFile(file) {
+            currentImageFile = file;
+            window.activeSample = null;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                displayChartImage(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function loadSampleChart(sampleKey) {
+            const sample = sampleCharts[sampleKey];
+            window.activeSample = sample;
+            displayChartImage(sample.url);
+        }
+
+        function displayChartImage(srcUrl) {
+            const img = document.getElementById('chartImage');
+            const placeholder = document.getElementById('uploadPlaceholder');
+            const previewContainer = document.getElementById('previewContainer');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+
+            img.crossOrigin = "anonymous";
+            img.src = srcUrl;
+
+            placeholder.classList.add('hidden');
+            previewContainer.classList.remove('hidden');
+            analyzeBtn.disabled = false;
+
+            clearCanvasOverlay();
+        }
+
+        // Run Analysis Simulation
+        function runFXWizzyAnalysis() {
+            const scannerOverlay = document.getElementById('scannerOverlay');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const scanStatusText = document.getElementById('scanStatusText');
+
+            scannerOverlay.classList.remove('hidden');
+            analyzeBtn.disabled = true;
+
+            const stages = [
+                "Scanning Candlestick Structure & Timeframe...",
+                "Mapping Support, Resistance & FVG Zones...",
+                "Calculating Stop Loss & Risk/Reward Ratio...",
+                "Generating FXWizzy Signal..."
+            ];
+
+            let stageIdx = 0;
+            const interval = setInterval(() => {
+                stageIdx++;
+                if (stageIdx < stages.length) {
+                    scanStatusText.textContent = stages[stageIdx];
+                }
+            }, 450);
+
+            setTimeout(() => {
+                clearInterval(interval);
+                scannerOverlay.classList.add('hidden');
+                analyzeBtn.disabled = false;
+
+                const generatedSignal = renderAnalysisResults();
+                drawChartOverlayCanvas();
+                saveSignalToJournal(generatedSignal);
+            }, 2000);
+        }
+
+        function renderAnalysisResults() {
+            document.getElementById('emptySignalState').classList.add('hidden');
+            const dash = document.getElementById('signalDashboard');
+            dash.classList.remove('hidden');
+
+            let data;
+            if (window.activeSample) {
+                data = window.activeSample;
+            } else {
+                const selectedMarket = document.getElementById('marketType').value;
+                const selectedTF = document.getElementById('timeframeSelect').value;
+                const isBuy = Math.random() > 0.35;
+
+                let pairName = 'EUR/USD';
+                if(selectedMarket === 'CRYPTO') pairName = 'SOL/USD';
+                else if(selectedMarket === 'STOCKS') pairName = 'TSLA';
+                else if(selectedMarket === 'INDICES') pairName = 'XAU/USD (Gold)';
+                else if(selectedMarket === 'FOREX') pairName = 'GBP/USD';
+
+                data = {
+                    pair: pairName,
+                    timeframe: selectedTF === 'AUTO' ? 'H1' : selectedTF,
+                    bias: isBuy ? 'BUY' : 'SELL',
+                    confidence: (90 + Math.floor(Math.random() * 8)) + '%',
+                    entry: (1850.20 + Math.random() * 15).toFixed(2),
+                    sl: isBuy ? (1836.00).toFixed(2) : (1866.00).toFixed(2),
+                    tp1: isBuy ? (1868.00).toFixed(2) : (1832.00).toFixed(2),
+                    tp2: isBuy ? (1885.00).toFixed(2) : (1815.00).toFixed(2),
+                    tp3: isBuy ? (1910.00).toFixed(2) : (1790.00).toFixed(2),
+                    rrr: '1 : 2.8',
+                    pattern: isBuy ? 'Bullish Order Block + Retest' : 'Bearish Breakdown Pattern',
+                    trend: isBuy ? 'Uptrend Structure' : 'Bearish Structure',
+                    liquidity: 'Liquidity Levels Cleared',
+                    rsi: 'Divergence Signal (44.5)',
+                    ma: 'Trading Above 50 EMA',
+                    volume: 'Buying Spike Detected',
+                    strategy: 'Market structure indicates high win-rate potential. Maintain maximum 1-2% capital risk.'
+                };
+            }
+
+            document.getElementById('outPair').textContent = data.pair;
+            document.getElementById('outTimeframe').textContent = data.timeframe + ' Timeframe';
+            document.getElementById('outConfidence').textContent = data.confidence + ' Confidence';
+            document.getElementById('outEntry').textContent = data.entry;
+            document.getElementById('outSL').textContent = data.sl;
+            document.getElementById('outTP1').textContent = data.tp1;
+            document.getElementById('outTP2').textContent = data.tp2;
+            document.getElementById('outTP3').textContent = data.tp3;
+            document.getElementById('outRRR').textContent = data.rrr;
+
+            document.getElementById('outPattern').textContent = data.pattern;
+            document.getElementById('outTrend').textContent = data.trend;
+            document.getElementById('outLiquidity').textContent = data.liquidity;
+            document.getElementById('outRSI').textContent = data.rsi;
+            document.getElementById('outMA').textContent = data.ma;
+            document.getElementById('outVolume').textContent = data.volume;
+            document.getElementById('outStrategyText').textContent = data.strategy;
+
+            const badge = document.getElementById('biasBadge');
+            const biasText = document.getElementById('biasText');
+            const biasIcon = document.getElementById('biasIcon');
+
+            if (data.bias === 'BUY') {
+                badge.className = "bg-brand-green/20 border-2 border-brand-green text-brand-greenBright px-5 py-2.5 rounded-xl flex items-center gap-2 font-black text-lg tracking-wider uppercase shadow-lg shadow-brand-green/10";
+                biasText.textContent = "STRONG BUY";
+                biasIcon.className = "fa-solid fa-arrow-trend-up";
+            } else {
+                badge.className = "bg-brand-red/20 border-2 border-brand-red text-brand-red px-5 py-2.5 rounded-xl flex items-center gap-2 font-black text-lg tracking-wider uppercase shadow-lg shadow-brand-red/10";
+                biasText.textContent = "STRONG SELL";
+                biasIcon.className = "fa-solid fa-arrow-trend-down";
+            }
+
+            dash.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            calculateLotSize(); // Recalculate position size automatically
+            return data;
+        }
+
+        // Overlay Lines Canvas Rendering Engine
+        function drawChartOverlayCanvas() {
+            const canvas = document.getElementById('chartCanvas');
+            const ctx = canvas.getContext('2d');
+            const container = canvas.parentElement;
+
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const w = canvas.width;
+            const h = canvas.height;
+
+            // Draw TP Target Line (Green)
+            ctx.beginPath();
+            ctx.setLineDash([6, 4]);
+            ctx.strokeStyle = '#10B981';
+            ctx.lineWidth = 2.5;
+            ctx.moveTo(15, h * 0.28);
+            ctx.lineTo(w - 15, h * 0.28);
+            ctx.stroke();
+
+            ctx.fillStyle = '#10B981';
+            ctx.font = 'bold 12px JetBrains Mono';
+            ctx.fillText('TARGET / TP1', w - 120, h * 0.28 - 6);
+
+            // Draw Entry Zone Line (Gold)
+            ctx.beginPath();
+            ctx.setLineDash([]);
+            ctx.strokeStyle = '#D4AF37';
+            ctx.lineWidth = 2.5;
+            ctx.moveTo(15, h * 0.52);
+            ctx.lineTo(w - 15, h * 0.52);
+            ctx.stroke();
+
+            ctx.fillStyle = '#D4AF37';
+            ctx.font = 'bold 12px JetBrains Mono';
+            ctx.fillText('ENTRY ZONE', w - 110, h * 0.52 - 6);
+
+            // Draw SL Line (Red)
+            ctx.beginPath();
+            ctx.setLineDash([6, 4]);
+            ctx.strokeStyle = '#EF4444';
+            ctx.lineWidth = 2.5;
+            ctx.moveTo(15, h * 0.74);
+            ctx.lineTo(w - 15, h * 0.74);
+            ctx.stroke();
+
+            ctx.fillStyle = '#EF4444';
+            ctx.font = 'bold 12px JetBrains Mono';
+            ctx.fillText('STOP LOSS', w - 100, h * 0.74 + 16);
+        }
+
+        function clearCanvasOverlay() {
+            const canvas = document.getElementById('chartCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Position & Lot Size Calculator Formula Logic
+        function calculateLotSize() {
+            const balance = parseFloat(document.getElementById('calcBalance').value) || 0;
+            const riskPct = parseFloat(document.getElementById('calcRisk').value) || 0;
+            const pips = parseFloat(document.getElementById('calcPips').value) || 1;
+            const asset = document.getElementById('calcAsset').value;
+
+            const riskAmount = balance * (riskPct / 100);
+            let lotSize = 0;
+
+            if (asset === 'FOREX') {
+                lotSize = riskAmount / (pips * 10);
+            } else if (asset === 'CRYPTO') {
+                lotSize = riskAmount / pips;
+            } else {
+                lotSize = riskAmount / pips;
+            }
+
+            const rewardAmount = riskAmount * 2.8;
+
+            document.getElementById('calcRiskAmount').textContent = '$' + riskAmount.toFixed(2);
+            document.getElementById('calcLotResult').textContent = lotSize.toFixed(2) + (asset === 'FOREX' ? ' Lots' : ' Units');
+            document.getElementById('calcRewardAmount').textContent = '$' + rewardAmount.toFixed(2);
+        }
+
+        // Journal & Signal History Storage Logic
+        function saveSignalToJournal(signal) {
+            const entryItem = {
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                pair: signal.pair,
+                bias: signal.bias,
+                entry: signal.entry,
+                sl: signal.sl,
+                tp1: signal.tp1,
+                rrr: signal.rrr
+            };
+
+            signalJournal.unshift(entryItem);
+            if (signalJournal.length > 10) signalJournal.pop(); // Keep last 10 signals
+
+            localStorage.setItem('fxwizzy_journal', JSON.stringify(signalJournal));
+            updateJournalUI();
+        }
+
+        function updateJournalUI() {
+            const tbody = document.getElementById('journalTableBody');
+            if (!signalJournal || signalJournal.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-gray-500 font-sans">No saved signals yet. Upload a chart above to save your first signal!</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = signalJournal.map(item => `
+                <tr class="hover:bg-brand-card/60 transition">
+                    <td class="p-3 text-gray-400">${item.time}</td>
+                    <td class="p-3 font-bold text-white">${item.pair}</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${item.bias === 'BUY' ? 'bg-brand-green/20 text-brand-greenBright border border-brand-green/30' : 'bg-brand-red/20 text-brand-red border border-brand-red/30'}">${item.bias}</span></td>
+                    <td class="p-3 text-white">${item.entry}</td>
+                    <td class="p-3 text-brand-red">${item.sl}</td>
+                    <td class="p-3 text-brand-greenBright">${item.tp1}</td>
+                    <td class="p-3 text-brand-gold">${item.rrr}</td>
+                </tr>
+            `).join('');
+        }
+
+        function clearJournalHistory() {
+            signalJournal = [];
+            localStorage.removeItem('fxwizzy_journal');
+            updateJournalUI();
+        }
+
+        function copyTradeSignal() {
+            const pair = document.getElementById('outPair').textContent;
+            const bias = document.getElementById('biasText').textContent;
+            const entry = document.getElementById('outEntry').textContent;
+            const sl = document.getElementById('outSL').textContent;
+            const tp1 = document.getElementById('outTP1').textContent;
+
+            const textToCopy = `⚡ FXWizzy Signal ⚡\nPair: ${pair}\nDirection: ${bias}\nEntry: ${entry}\nSL: ${sl}\nTP1: ${tp1}\n\nAnalyzed via FXWizzy AI Vision`;
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert('✅ FXWizzy Trading Signal copied to clipboard!');
+            });
+        }
+
+        function downloadAnnotatedChart() {
+            const img = document.getElementById('chartImage');
+            if (!img.src) return;
+
+            const tempCanvas = document.createElement('canvas');
+            const ctx = tempCanvas.getContext('2d');
+
+            tempCanvas.width = img.naturalWidth || 800;
+            tempCanvas.height = img.naturalHeight || 600;
+
+            ctx.drawImage(img, 0, 0, tempCanvas.width, tempCanvas.height);
+
+            const w = tempCanvas.width;
+            const h = tempCanvas.height;
+
+            ctx.strokeStyle = '#10B981';
+            ctx.lineWidth = 4;
+            ctx.beginPath(); ctx.moveTo(0, h * 0.28); ctx.lineTo(w, h * 0.28); ctx.stroke();
+
+            ctx.strokeStyle = '#D4AF37';
+            ctx.lineWidth = 4;
+            ctx.beginPath(); ctx.moveTo(0, h * 0.52); ctx.lineTo(w, h * 0.52); ctx.stroke();
+
+            ctx.strokeStyle = '#EF4444';
+            ctx.lineWidth = 4;
+            ctx.beginPath(); ctx.moveTo(0, h * 0.74); ctx.lineTo(w, h * 0.74); ctx.stroke();
+
+            const link = document.createElement('a');
+            link.download = 'FXWizzy_Analyzed_Chart.png';
+            link.href = tempCanvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // Live Simulated Ticker Fluctuations
+        setInterval(() => {
+            const btcEl = document.getElementById('tick-btc');
+            if(btcEl) {
+                const btcVal = (67800 + Math.random() * 80).toFixed(2);
+                btcEl.textContent = `$${btcVal} (+3.8%)`;
+            }
+        }, 3000);
+    </script>
+</body>
+</html>
