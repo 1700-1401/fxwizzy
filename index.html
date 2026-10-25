@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FXWizzy - 100% Auto AI Chart Analyzer</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FXWizzy - AI Chart Analyzer</title>
     <style>
         :root {
             --primary-bg: #1a0614;
@@ -17,15 +17,17 @@
             --scanner-color: #00e5ff;
         }
 
+        * { box-sizing: border-box; }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--primary-bg);
             color: var(--text-main);
             margin: 0;
             padding: 0;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
         }
 
         header {
@@ -54,7 +56,7 @@
         .logo-y { color: #4caf50; text-shadow: 1px 1px 2px #000; font-size: 34px; line-height: 0; }
 
         .container {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 40px auto;
             padding: 0 20px;
             display: flex;
@@ -82,6 +84,7 @@
             font-size: 20px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
 
         .badge {
@@ -187,7 +190,7 @@
         .signal-pair { font-size: 24px; font-weight: bold; letter-spacing: 1px; }
         .signal-tf { font-size: 14px; color: var(--text-muted); margin-top: 5px; }
         .signal-dir { font-size: 18px; font-weight: bold; padding: 6px 15px; border-radius: 4px; }
-        
+
         .dir-buy { background-color: rgba(0, 230, 118, 0.15); color: var(--buy-color); border: 1px solid var(--buy-color); }
         .dir-sell { background-color: rgba(255, 82, 82, 0.15); color: var(--sell-color); border: 1px solid var(--sell-color); }
 
@@ -207,7 +210,7 @@
 
         .price-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
         .price-value { font-size: 20px; font-weight: bold; font-family: 'Courier New', Courier, monospace; }
-        
+
         .val-entry { color: var(--gold-accent); }
         .val-sl { color: var(--sell-color); }
         .val-tp { color: var(--buy-color); }
@@ -231,6 +234,52 @@
             display: none;
         }
 
+        .api-key-box {
+            margin-top: 16px;
+            padding: 14px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+        }
+
+        .api-key-box label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--text-muted);
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .api-key-box input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(0,0,0,0.25);
+            color: white;
+            font-size: 14px;
+        }
+
+        .api-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .mini-btn {
+            flex: 1;
+            padding: 10px 12px;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .save-btn { background: #2ecc71; }
+        .clear-btn { background: #e74c3c; }
+
         @media (max-width: 768px) {
             .container { flex-direction: column; }
             .price-grid { grid-template-columns: 1fr; }
@@ -250,10 +299,9 @@
     </header>
 
     <div class="container">
-        <!-- Left Panel: Upload -->
         <div class="panel">
             <h2>1. Upload Chart <span class="badge" style="background:var(--gold-accent); color:#000;">100% Auto</span></h2>
-            
+
             <label for="chartUpload" class="upload-area" id="dropZone">
                 <div style="font-size: 50px; margin-bottom: 10px;">📸</div>
                 <p>Click to upload chart screenshot</p>
@@ -268,17 +316,30 @@
 
             <button class="btn" id="analyzeBtn" disabled>Scan & Analyze with AI</button>
             <div class="loader-text" id="loaderText">Connecting to AI Vision...</div>
+
+            <div class="api-key-box">
+                <label for="apiKeyInput">API Key</label>
+                <input
+                    id="apiKeyInput"
+                    type="password"
+                    placeholder="Paste your API key here"
+                    autocomplete="off"
+                />
+                <div class="api-actions">
+                    <button class="mini-btn save-btn" id="saveApiKeyBtn" type="button">Save Key</button>
+                    <button class="mini-btn clear-btn" id="clearApiKeyBtn" type="button">Clear</button>
+                </div>
+            </div>
         </div>
 
-        <!-- Right Panel: Output -->
         <div class="panel">
             <h2>2. Execution Plan <span class="badge">AI Generated</span></h2>
-            
+
             <div id="placeholderText" style="color: var(--text-muted); text-align: center; margin-top: 60px;">
                 <p>Awaiting chart upload...</p>
                 <p style="font-size: 13px;">The AI will literally look at your chart, identify the market structure, and generate a precise trade setup.</p>
             </div>
-            
+
             <div class="result-box" id="resultBox">
                 <div class="signal-header">
                     <div>
@@ -287,7 +348,7 @@
                     </div>
                     <span class="signal-dir dir-buy" id="outDir">WAIT</span>
                 </div>
-                
+
                 <div class="price-grid">
                     <div class="price-item">
                         <div class="price-label">Entry Zone (OB/FVG)</div>
@@ -313,9 +374,9 @@
     </div>
 
     <script>
-        // ⚠️ PASTE YOUR OPENAI API KEY HERE ⚠️
-        const OPENAI_API_KEY = "sk-proj-YOUR_ACTUAL_API_KEY_HERE"; 
+        const STORAGE_KEY = "FXwizzy_Data_Key";
 
+        let OPENAI_API_KEY = localStorage.getItem(STORAGE_KEY) || "";
         const fileInput = document.getElementById('chartUpload');
         const imagePreview = document.getElementById('imagePreview');
         const imageContainer = document.getElementById('imageContainer');
@@ -324,11 +385,37 @@
         const resultBox = document.getElementById('resultBox');
         const placeholderText = document.getElementById('placeholderText');
         const loaderText = document.getElementById('loaderText');
+        const apiKeyInput = document.getElementById('apiKeyInput');
+        const saveApiKeyBtn = document.getElementById('saveApiKeyBtn');
+        const clearApiKeyBtn = document.getElementById('clearApiKeyBtn');
+
+        apiKeyInput.value = OPENAI_API_KEY;
+
+        function saveApiKey() {
+            const value = apiKeyInput.value.trim();
+            if (!value) {
+                alert("Please paste your API key first.");
+                return;
+            }
+
+            localStorage.setItem(STORAGE_KEY, value);
+            OPENAI_API_KEY = value;
+            alert("API key saved in this browser.");
+        }
+
+        function clearApiKey() {
+            localStorage.removeItem(STORAGE_KEY);
+            OPENAI_API_KEY = "";
+            apiKeyInput.value = "";
+            alert("API key cleared.");
+        }
+
+        saveApiKeyBtn.addEventListener('click', saveApiKey);
+        clearApiKeyBtn.addEventListener('click', clearApiKey);
 
         let selectedFile = null;
         let base64Image = null;
 
-        // Handle Image Upload
         fileInput.addEventListener('change', function(e) {
             selectedFile = e.target.files[0];
             if (selectedFile) {
@@ -345,11 +432,11 @@
             }
         });
 
-        // Call OpenAI Vision API
         analyzeBtn.addEventListener('click', async function() {
             if (!base64Image) return;
-            if (OPENAI_API_KEY === "sk-proj-YOUR_ACTUAL_API_KEY_HERE") {
-                alert("Please put your OpenAI API key in the code first!");
+
+            if (!OPENAI_API_KEY) {
+                alert("Please save your API key first.");
                 return;
             }
 
@@ -362,7 +449,6 @@
             loaderText.innerText = "Analyzing image with GPT-4o... (This takes 5-10 seconds)";
 
             try {
-                // 1. Send Image to OpenAI
                 const response = await fetch("https://api.openai.com/v1/chat/completions", {
                     method: "POST",
                     headers: {
@@ -377,7 +463,7 @@
                                 content: [
                                     {
                                         type: "text",
-                                        text: `You are an expert Smart Money Concepts (SMC) trader. Analyze this chart image carefully. 
+                                        text: `You are an expert Smart Money Concepts (SMC) trader. Analyze this chart image carefully.
                                         
                                         1. Extract the exact Asset Pair (e.g., XAUUSD, EURUSD).
                                         2. Extract the Timeframe (e.g., 15M, 1H, 4H).
@@ -386,7 +472,7 @@
                                         5. Find the nearest Order Block or Fair Value Gap.
                                         6. Calculate a precise trade setup (BUY or SELL) with Entry, Stop Loss, and Take Profit 1 (1:2 RR) and Take Profit 2 (1:3 RR).
                                         
-                                        Return ONLY a raw JSON object with NO markdown formatting, using exactly these keys: 
+                                        Return ONLY a raw JSON object with NO markdown formatting, using exactly these keys:
                                         "pair", "timeframe", "direction", "entry", "sl", "tp1", "tp2", "notes".
                                         
                                         The "notes" should be a brief paragraph explaining the Smart Money Concept (liquidity, FVG, OB) you see and why you chose that direction.`
@@ -405,25 +491,22 @@
                 });
 
                 const data = await response.json();
-                
+
                 if (data.error) {
                     throw new Error(data.error.message);
                 }
 
                 const aiText = data.choices[0].message.content;
-                
-                // Clean the response (sometimes AI wraps JSON in ```json ... ```)
                 const cleanJson = aiText.replace(/```json/g, "").replace(/```/g, "").trim();
                 const result = JSON.parse(cleanJson);
 
-                // 2. Display the Results
                 scannerLine.style.display = 'none';
                 loaderText.style.display = 'none';
                 resultBox.style.display = 'block';
 
                 document.getElementById('outPair').innerText = result.pair;
                 document.getElementById('outTF').innerText = `Timeframe: ${result.timeframe}`;
-                
+
                 const outDir = document.getElementById('outDir');
                 outDir.innerText = result.direction;
                 outDir.className = result.direction === 'SELL' ? 'signal-dir dir-sell' : 'signal-dir dir-buy';
@@ -436,7 +519,7 @@
 
             } catch (error) {
                 console.error(error);
-                alert("Error: " + error.message + "\nMake sure your API key is correct and you have credits in your OpenAI account.");
+                alert("Error: " + error.message + "\nMake sure your API key is correct and you have credits in your account.");
                 scannerLine.style.display = 'none';
                 loaderText.style.display = 'none';
             } finally {
@@ -445,7 +528,7 @@
             }
         });
     </script>
-    
+
     <style>
         @keyframes pulse {
             0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.7); }
