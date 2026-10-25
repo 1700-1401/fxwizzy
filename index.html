@@ -323,15 +323,7 @@
                 <input
                     id="apiKeyInput"
                     type="password"
-                    placeholder="Paste your provider API key here"
-                    autocomplete="off"
-                />
-
-                <label for="apiEndpointInput">Endpoint URL</label>
-                <input
-                    id="apiEndpointInput"
-                    type="text"
-                    placeholder="https://api.openai.com/v1/chat/completions"
+                    placeholder="Paste your API key here"
                     autocomplete="off"
                 />
 
@@ -396,10 +388,9 @@
         const DEFAULT_ENDPOINT = "https://api.openai.com/v1/chat/completions";
         const DEFAULT_MODEL = "gpt-4o";
 
-        let apiConfig = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{"apiKey":"","endpoint":"' + DEFAULT_ENDPOINT + '","model":"' + DEFAULT_MODEL + '"}');
+        let apiConfig = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{"apiKey":"","model":"' + DEFAULT_MODEL + '"}');
 
-        let OPENAI_API_KEY = apiConfig.apiKey || "";
-        let API_ENDPOINT = apiConfig.endpoint || DEFAULT_ENDPOINT;
+        let API_KEY = apiConfig.apiKey || "";
         let API_MODEL = apiConfig.model || DEFAULT_MODEL;
 
         const fileInput = document.getElementById('chartUpload');
@@ -411,18 +402,15 @@
         const placeholderText = document.getElementById('placeholderText');
         const loaderText = document.getElementById('loaderText');
         const apiKeyInput = document.getElementById('apiKeyInput');
-        const apiEndpointInput = document.getElementById('apiEndpointInput');
         const apiModelInput = document.getElementById('apiModelInput');
         const saveApiKeyBtn = document.getElementById('saveApiKeyBtn');
         const clearApiKeyBtn = document.getElementById('clearApiKeyBtn');
 
-        apiKeyInput.value = OPENAI_API_KEY;
-        apiEndpointInput.value = API_ENDPOINT;
+        apiKeyInput.value = API_KEY;
         apiModelInput.value = API_MODEL;
 
         function saveApiKey() {
             const value = apiKeyInput.value.trim();
-            const endpoint = (apiEndpointInput.value || '').trim() || DEFAULT_ENDPOINT;
             const model = (apiModelInput.value || '').trim() || DEFAULT_MODEL;
 
             if (!value) {
@@ -430,21 +418,18 @@
                 return;
             }
 
-            apiConfig = { apiKey: value, endpoint, model };
+            apiConfig = { apiKey: value, model };
             localStorage.setItem(STORAGE_KEY, JSON.stringify(apiConfig));
-            OPENAI_API_KEY = value;
-            API_ENDPOINT = endpoint;
+            API_KEY = value;
             API_MODEL = model;
             alert("API settings saved in this browser.");
         }
 
         function clearApiKey() {
             localStorage.removeItem(STORAGE_KEY);
-            OPENAI_API_KEY = "";
-            API_ENDPOINT = DEFAULT_ENDPOINT;
+            API_KEY = "";
             API_MODEL = DEFAULT_MODEL;
             apiKeyInput.value = "";
-            apiEndpointInput.value = DEFAULT_ENDPOINT;
             apiModelInput.value = DEFAULT_MODEL;
             alert("API settings cleared.");
         }
@@ -474,12 +459,11 @@
         analyzeBtn.addEventListener('click', async function() {
             if (!base64Image) return;
 
-            if (!OPENAI_API_KEY) {
+            if (!API_KEY) {
                 alert("Please save your API key first.");
                 return;
             }
 
-            const endpoint = API_ENDPOINT || DEFAULT_ENDPOINT;
             const model = API_MODEL || DEFAULT_MODEL;
 
             analyzeBtn.disabled = true;
@@ -491,12 +475,12 @@
             loaderText.innerText = `Analyzing image with ${model}... (This takes 5-10 seconds)`;
 
             try {
-                const response = await fetch(endpoint, {
+                const response = await fetch(DEFAULT_ENDPOINT, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${OPENAI_API_KEY}`,
-                        "X-API-Key": OPENAI_API_KEY
+                        "Authorization": `Bearer ${API_KEY}`,
+                        "X-API-Key": API_KEY
                     },
                     body: JSON.stringify({
                         model,
@@ -562,7 +546,7 @@
 
             } catch (error) {
                 console.error(error);
-                alert("Error: " + (error.message || 'Unknown error') + "\nCheck your key, endpoint, model, and provider account status.");
+                alert("Error: " + (error.message || 'Unknown error') + "\nCheck your key and model, then confirm your account has credits.");
                 scannerLine.style.display = 'none';
                 loaderText.style.display = 'none';
             } finally {
